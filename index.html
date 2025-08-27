@@ -1,455 +1,484 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desafio da Saúde Online</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Bibliotecas para exportação -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        .hidden { display: none; }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .custom-select {
-            -webkit-appearance: none; -moz-appearance: none; appearance: none;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236B7280%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
-            background-repeat: no-repeat; background-position: right 0.7rem center; background-size: 0.65rem auto;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio da Saúde Online</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Bibliotecas para exportação -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hidden { display: none; }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .custom-select {
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236B7280%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+            background-repeat: no-repeat; background-position: right 0.7rem center; background-size: 0.65rem auto;
+        }
+        .subtle-bg {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg id='hexagons' fill='%23e2f3f1' fill-opacity='0.4' fill-rule='nonzero'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.99-7.5L26 15v18.5L13 41 0 33.5V15z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-    <div id="app-container" class="container mx-auto p-4 sm:p-6 max-w-5xl">
-        <!-- TELA DE LOADING INICIAL -->
-        <div id="loading-screen" class="text-center p-10">
-            <div class="loader mx-auto"></div>
-            <p class="mt-4 text-gray-600">A ligar ao servidor...</p>
-        </div>
+    <div id="app-container" class="container mx-auto p-4 sm:p-6 max-w-5xl">
+        <!-- TELA DE LOADING INICIAL -->
+        <div id="loading-screen" class="text-center p-10">
+            <div class="loader mx-auto"></div>
+            <p class="mt-4 text-gray-600">Conectando ao servidor...</p>
+        </div>
 
-        <!-- TELA DE CONFIGURAÇÃO INICIAL -->
-        <div id="setup-screen" class="hidden">
-            <header class="text-center mb-6">
-                <h1 class="text-3xl sm:text-4xl font-bold text-teal-600">Desafio da Saúde</h1>
-                <p class="text-gray-500 mt-1">Selecione a data e o participante para começar.</p>
-            </header>
-            <div class="bg-white p-6 rounded-xl shadow-md max-w-md mx-auto space-y-4">
-                <div>
-                    <label for="setup-date" class="block text-sm font-medium text-gray-700 mb-1">Data do Check-in:</label>
-                    <input type="date" id="setup-date" class="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                </div>
-                <div>
-                    <label for="setup-participant" class="block text-sm font-medium text-gray-700 mb-1">Participante:</label>
-                    <select id="setup-participant" class="custom-select w-full p-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
-                        <option value="">-- Selecione --</option>
-                    </select>
-                </div>
-                <div id="confirmation-details" class="hidden text-center bg-gray-100 p-3 rounded-lg">
-                    <p>Registar para <strong id="confirm-name"></strong> no dia <strong id="confirm-date"></strong>.</p>
-                </div>
-                <button id="confirm-setup-btn" disabled class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200">Confirmar e Continuar</button>
-            </div>
-        </div>
+        <!-- TELA DE CONFIGURAÇÃO INICIAL -->
+        <div id="setup-screen" class="hidden">
+            <header class="text-center mb-6">
+                <h1 class="text-3xl sm:text-4xl font-bold text-teal-600">Desafio da Saúde</h1>
+                <p class="text-gray-500 mt-1">Selecione a data e o participante para começar.</p>
+            </header>
+            <div class="bg-white p-6 rounded-xl shadow-md max-w-md mx-auto space-y-4">
+                <div>
+                    <label for="setup-date" class="block text-sm font-medium text-gray-700 mb-1">Data do Check-in:</label>
+                    <input type="date" id="setup-date" class="w-full p-2 border border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                </div>
+                <div>
+                    <label for="setup-participant" class="block text-sm font-medium text-gray-700 mb-1">Participante:</label>
+                    <select id="setup-participant" class="custom-select w-full p-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:ring-teal-500 focus:border-teal-500">
+                        <option value="">-- Selecione --</option>
+                    </select>
+                </div>
+                <div id="confirmation-details" class="hidden text-center bg-gray-100 p-3 rounded-lg">
+                    <p>Registrando para <strong id="confirm-name"></strong> no dia <strong id="confirm-date"></strong>.</p>
+                </div>
+                <button id="confirm-setup-btn" disabled class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200">Confirmar e Continuar</button>
+            </div>
+        </div>
 
-        <!-- TELA PRINCIPAL DO APP (Check-in e Ranking) -->
-        <div id="main-app" class="hidden">
-            <header class="text-center mb-4">
-                 <h1 class="text-3xl sm:text-4xl font-bold text-teal-600">Check-in</h1>
-                 <p class="text-gray-500 mt-1">Participante: <strong id="current-participant-name"></strong> | Data: <strong id="current-checkin-date"></strong></p>
-            </header>
-             <div id="message-box" class="hidden text-center p-3 mb-6 rounded-lg"></div>
+        <!-- TELA PRINCIPAL DO APP (Check-in e Ranking) -->
+        <div id="main-app" class="hidden">
+            <header class="text-center mb-4">
+                 <h1 class="text-3xl sm:text-4xl font-bold text-teal-600">Check-in</h1>
+                 <p class="text-gray-500 mt-1">Participante: <strong id="current-participant-name"></strong> | Data: <strong id="current-checkin-date"></strong></p>
+            </header>
+             <div id="message-box" class="hidden text-center p-3 mb-6 rounded-lg"></div>
 
-            <main class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Coluna de Formulários -->
-                <form id="checkin-form" class="space-y-6">
-                    <!-- Atividade Física -->
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h2 class="text-xl font-bold mb-4 border-b pb-2">1. Atividade Física</h2>
-                        <div class="space-y-4">
-                            <div>
-                                <label for="aerobic-minutes" class="block text-sm font-medium">1.1 Minutos de atividade aeróbica hoje:</label>
-                                <input type="number" id="aerobic-minutes" min="0" placeholder="Ex: 30" class="mt-1 w-full p-2 border border-gray-300 rounded-lg">
-                            </div>
-                            <div>
-                                <label for="strength-sessions" class="block text-sm font-medium">1.2 Sessões de força hoje:</label>
-                                <input type="number" id="strength-sessions" min="0" max="2" placeholder="Ex: 1" class="mt-1 w-full p-2 border border-gray-300 rounded-lg">
-                            </div>
-                        </div>
-                    </div>
+            <main class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Coluna de Formulários -->
+                <form id="checkin-form" class="space-y-6">
+                    <!-- Atividade Física -->
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h2 class="text-xl font-bold mb-4 border-b pb-2">1. Atividade Física</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="aerobic-minutes" class="block text-sm font-medium">1.1 Minutos de atividade aeróbica hoje:</label>
+                                <input type="number" id="aerobic-minutes" min="0" placeholder="Ex: 30" class="mt-1 w-full p-2 border border-gray-300 rounded-lg">
+                            </div>
+                            <div>
+                                <label for="strength-sessions" class="block text-sm font-medium">1.2 Sessões de força hoje:</label>
+                                <input type="number" id="strength-sessions" min="0" max="2" placeholder="Ex: 1" class="mt-1 w-full p-2 border border-gray-300 rounded-lg">
+                            </div>
+                        </div>
+                    </div>
 
-                    <!-- Alimentação -->
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h2 class="text-xl font-bold mb-4 border-b pb-2">2. Alimentação</h2>
-                        <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium">2.1 Refeições com frutas/vegetais:</label>
-                                <div id="fruit-checklist" class="mt-2 grid grid-cols-2 gap-2 text-sm"></div>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium">Outras metas de alimentação:</label>
-                                <div class="mt-2 space-y-2 text-sm">
-                                    <div class="flex items-center"><input id="hydration" type="checkbox" class="h-4 w-4 rounded border-gray-300"><label for="hydration" class="ml-2">2.2 Bebi 2L+ de água</label></div>
-                                    <div class="flex items-center"><input id="no-sweets" type="checkbox" class="h-4 w-4 rounded border-gray-300"><label for="no-sweets" class="ml-2">2.3 Sem doces/refris/fast-food</label></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Alimentação -->
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h2 class="text-xl font-bold mb-4 border-b pb-2">2. Alimentação</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium">2.1 Refeições com frutas/vegetais:</label>
+                                <div id="fruit-checklist" class="mt-2 grid grid-cols-2 gap-2 text-sm"></div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium">Outras metas de alimentação:</label>
+                                <div class="mt-2 space-y-2 text-sm">
+                                    <div class="flex items-center"><input id="hydration" type="checkbox" class="h-4 w-4 rounded border-gray-300"><label for="hydration" class="ml-2">2.2 Bebi 2L+ de água</label></div>
+                                    <div class="flex items-center"><input id="no-sweets" type="checkbox" class="h-4 w-4 rounded border-gray-300"><label for="no-sweets" class="ml-2">2.3 Sem doces/refris/fast-food</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                    <!-- Bem-Estar e Sono -->
-                    <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h2 class="text-xl font-bold mb-4 border-b pb-2">3. Bem-Estar e Sono</h2>
-                        <div class="space-y-4">
-                             <div class="flex items-center text-sm"><input id="sleep" type="checkbox" class="h-4 w-4 rounded border-gray-300"><label for="sleep" class="ml-2">3.1 Dormi 7h+ de sono</label></div>
-                            <div>
-                                <label class="block text-sm font-medium">3.2 Atividades de bem-estar (marque as realizadas na semana):</label>
-                                <div id="selfcare-checklist" class="mt-2 grid grid-cols-2 gap-2 text-sm"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="submit" id="submit-checkin-btn" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 transition-colors duration-200">Finalizar Check-in</button>
-                </form>
+                    <!-- Bem-Estar e Sono -->
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <h2 class="text-xl font-bold mb-4 border-b pb-2">3. Bem-Estar e Sono</h2>
+                        <div class="space-y-4">
+                             <div class="flex items-center text-sm"><input id="sleep" type="checkbox" class="h-4 w-4 rounded border-gray-300"><label for="sleep" class="ml-2">3.1 Dormi 7h+ de sono</label></div>
+                            <div>
+                                <label class="block text-sm font-medium">3.2 Atividades de bem-estar (marque as realizadas na semana):</label>
+                                <div id="selfcare-checklist" class="mt-2 grid grid-cols-2 gap-2 text-sm"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" id="submit-checkin-btn" class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 transition-colors duration-200">Finalizar Check-in</button>
+                </form>
 
-                <!-- Coluna do Ranking -->
-                <div class="bg-white p-6 rounded-xl shadow-md">
-                    <h2 class="text-xl font-bold mb-4">Ranking Geral</h2>
-                    <div class="space-y-3" id="leaderboard"></div>
-                </div>
-            </main>
-        </div>
+                <!-- Coluna do Ranking -->
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <h2 class="text-xl font-bold mb-4">Ranking Geral</h2>
+                    <div class="space-y-3" id="leaderboard"></div>
+                </div>
+            </main>
+        </div>
 
-        <!-- TELA DE RESUMO (MODAL) -->
-        <div id="summary-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg">
-                <div id="summary-content" class="p-6">
-                    <h2 class="text-2xl font-bold text-center text-teal-600 mb-2">Resumo do Check-in</h2>
-                    <p class="text-center text-gray-600 mb-4">
-                        <strong id="summary-name"></strong> - <span id="summary-date"></span>
-                    </p>
-                    <div class="space-y-3 text-sm">
-                        <!-- Pontuações detalhadas -->
-                        <div id="summary-details" class="bg-gray-50 p-4 rounded-lg"></div>
-                        <!-- Totais -->
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-                            <div class="bg-teal-100 p-2 rounded"><div class="font-bold text-lg text-teal-800" id="summary-daily-total"></div><div class="text-xs text-teal-700">Pontos do Dia</div></div>
-                            <div class="bg-blue-100 p-2 rounded"><div class="font-bold text-lg text-blue-800" id="summary-weekly-total"></div><div class="text-xs text-blue-700">Total na Semana</div></div>
-                            <div class="bg-indigo-100 p-2 rounded"><div class="font-bold text-lg text-indigo-800" id="summary-monthly-total"></div><div class="text-xs text-indigo-700">Total no Mês</div></div>
-                            <div class="bg-purple-100 p-2 rounded"><div class="font-bold text-lg text-purple-800" id="summary-general-total"></div><div class="text-xs text-purple-700">Pontuação Geral</div></div>
-                        </div>
-                        <!-- Progresso semanal -->
-                        <div id="summary-progress" class="bg-gray-50 p-4 rounded-lg"></div>
-                    </div>
-                </div>
-                <div class="p-4 bg-gray-100 rounded-b-xl flex flex-col sm:flex-row gap-2">
-                    <button id="export-png-btn" class="flex-1 bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700">Exportar Imagem (.png)</button>
-                    <button id="export-xls-btn" class="flex-1 bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Exportar Planilha (.xls)</button>
-                    <button id="close-summary-btn" class="flex-1 bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600">Voltar ao Início</button>
-                </div>
-            </div>
-        </div>
-    </div>
+        <!-- TELA DE RESUMO (MODAL) -->
+        <div id="summary-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div id="summary-card-frame" class="p-1 bg-gradient-to-br from-teal-400 via-green-400 to-emerald-500 rounded-2xl shadow-2xl w-full max-w-lg">
+                <div class="bg-white rounded-xl">
+                    <div id="summary-content" class="p-6 subtle-bg">
+                        <h2 class="text-2xl font-bold text-center text-teal-600 mb-2">Resumo do Check-in</h2>
+                        <p class="text-center text-gray-600 mb-4">
+                            <strong id="summary-name"></strong> - <span id="summary-date"></span>
+                        </p>
+                        <div class="space-y-3 text-sm">
+                            <!-- Pontuações detalhadas -->
+                            <div id="summary-details" class="bg-gray-50 p-4 rounded-lg space-y-2"></div>
+                            <!-- Totais -->
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                                <div class="bg-teal-100 p-2 rounded"><div class="font-bold text-lg text-teal-800" id="summary-daily-total"></div><div class="text-xs text-teal-700">Pontos do Dia</div></div>
+                                <div class="bg-blue-100 p-2 rounded"><div class="font-bold text-lg text-blue-800" id="summary-weekly-total"></div><div class="text-xs text-blue-700">Total na Semana</div></div>
+                                <div class="bg-indigo-100 p-2 rounded"><div class="font-bold text-lg text-indigo-800" id="summary-monthly-total"></div><div class="text-xs text-indigo-700">Total no Mês</div></div>
+                                <div class="bg-purple-100 p-2 rounded"><div class="font-bold text-lg text-purple-800" id="summary-general-total"></div><div class="text-xs text-purple-700">Pontuação Geral</div></div>
+                            </div>
+                            <!-- Progresso semanal -->
+                            <div id="summary-progress" class="bg-gray-50 p-4 rounded-lg space-y-2"></div>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-gray-100 rounded-b-xl flex flex-col sm:flex-row gap-2">
+                        <button id="export-png-btn" class="flex-1 bg-green-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-700">Exportar Imagem (.png)</button>
+                        <button id="export-xls-btn" class="flex-1 bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700">Exportar Planilha (.xls)</button>
+                        <button id="close-summary-btn" class="flex-1 bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600">Voltar ao Início</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <script type="module">
-        // --- IMPORTAÇÕES DO FIREBASE ---
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    <script type="module">
+        // --- IMPORTAÇÕES DO FIREBASE ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-        // --- CONFIGURAÇÃO INICIAL ---
-        const participants = ['Carol', 'Iagê', 'Juliana', 'Mariana', 'Radmila'];
-        const challengeStartDate = new Date('2025-08-25T00:00:00');
-        const MEALS = ['Café da manhã', 'Lanche da manhã', 'Almoço', 'Lanche da tarde', 'Jantar', 'Ceia'];
-        const SELFCARE_ACTIVITIES = ['Meditação', 'Alongamento', 'Caminhada na natureza', 'Ler um livro', 'Outras'];
+        // --- CONFIGURAÇÃO INICIAL ---
+        const participants = ['Carol', 'Iagê', 'Juliana', 'Mariana', 'Radmila'];
+        const challengeStartDate = new Date('2025-08-25T00:00:00');
+        const MEALS = ['Café da manhã', 'Lanche da manhã', 'Almoço', 'Lanche da tarde', 'Jantar', 'Ceia'];
+        const SELFCARE_ACTIVITIES = ['Meditação', 'Alongamento', 'Caminhada na natureza', 'Ler um livro', 'Outras'];
 
-        let state = {
-            selectedParticipant: null,
-            selectedDate: null,
-            allData: {}, // Armazena todos os dados de todos os participantes
-            db: null,
-            appId: 'desafio-explorar-vizinhanca' // Usando o ID do projeto diretamente
-        };
+        let state = {
+            selectedParticipant: null,
+            selectedDate: null,
+            allData: {},
+            db: null,
+            appId: 'desafio-explorar-vizinhanca'
+        };
 
-        // --- ELEMENTOS DO DOM ---
-        const loadingScreen = document.getElementById('loading-screen');
-        const setupScreen = document.getElementById('setup-screen');
-        const mainApp = document.getElementById('main-app');
-        const setupDate = document.getElementById('setup-date');
-        const setupParticipant = document.getElementById('setup-participant');
-        const confirmDetails = document.getElementById('confirmation-details');
-        const confirmName = document.getElementById('confirm-name');
-        const confirmDate = document.getElementById('confirm-date');
-        const confirmBtn = document.getElementById('confirm-setup-btn');
-        const checkinForm = document.getElementById('checkin-form');
-        const leaderboardContainer = document.getElementById('leaderboard');
-        const summaryModal = document.getElementById('summary-modal');
-        const messageBox = document.getElementById('message-box');
+        // --- ELEMENTOS DO DOM ---
+        const loadingScreen = document.getElementById('loading-screen');
+        const setupScreen = document.getElementById('setup-screen');
+        const mainApp = document.getElementById('main-app');
+        const setupDate = document.getElementById('setup-date');
+        const setupParticipant = document.getElementById('setup-participant');
+        const confirmDetails = document.getElementById('confirmation-details');
+        const confirmName = document.getElementById('confirm-name');
+        const confirmDate = document.getElementById('confirm-date');
+        const confirmBtn = document.getElementById('confirm-setup-btn');
+        const checkinForm = document.getElementById('checkin-form');
+        const leaderboardContainer = document.getElementById('leaderboard');
+        const summaryModal = document.getElementById('summary-modal');
+        const messageBox = document.getElementById('message-box');
 
-        // --- FUNÇÕES DE PONTUAÇÃO ---
-        const getAerobicScore = (minutes) => {
-            if (minutes >= 130) return 20; if (minutes >= 100) return 14; if (minutes >= 80) return 12;
-            if (minutes >= 60) return 10; if (minutes >= 40) return 8; if (minutes >= 20) return 4;
-            if (minutes > 0) return 2; return 0;
-        };
-        const getStrengthScore = (sessions) => {
-            if (sessions >= 2) return 10; if (sessions >= 1) return 2; return 0;
-        };
-        const getFruitScore = (portions) => {
-            if (portions >= 5) return 10; if (portions >= 4) return 6; if (portions >= 3) return 3;
-            if (portions >= 2) return 2; if (portions >= 1) return 1; return 0;
-        };
+        // --- FUNÇÕES DE PONTUAÇÃO ---
+        const getAerobicScore = (minutes) => {
+            if (minutes >= 130) return 20; if (minutes >= 100) return 14; if (minutes >= 80) return 12;
+            if (minutes >= 60) return 10; if (minutes >= 40) return 8; if (minutes >= 20) return 4;
+            if (minutes > 0) return 2; return 0;
+        };
+        const getStrengthScore = (sessions) => {
+            if (sessions >= 2) return 10; if (sessions >= 1) return 2; return 0;
+        };
+        const getFruitScore = (portions) => {
+            if (portions >= 5) return 10; if (portions >= 4) return 6; if (portions >= 3) return 3;
+            if (portions >= 2) return 2; if (portions >= 1) return 1; return 0;
+        };
 
-        // --- FUNÇÕES DE DATA ---
-        const getFormattedDateKey = (d) => d.toISOString().split('T')[0];
-        const getChallengeWeekKey = (d) => {
-            if (d < challengeStartDate) return null;
-            const diffTime = d - challengeStartDate;
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            return `challenge-week-${Math.floor(diffDays / 7)}`;
-        };
-        const getMonthKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        // --- FUNÇÕES DE DATA ---
+        const getFormattedDateKey = (d) => d.toISOString().split('T')[0];
+        const getChallengeWeekKey = (d) => {
+            if (d < challengeStartDate) return null;
+            const diffTime = d - challengeStartDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            return `challenge-week-${Math.floor(diffDays / 7)}`;
+        };
+        const getMonthKey = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
 
-        // --- FUNÇÕES DE UI ---
-        const showMessage = (message, type = 'success') => {
-            messageBox.textContent = message;
-            messageBox.className = `text-center p-3 mb-6 rounded-lg ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
-            setTimeout(() => messageBox.className = 'hidden', 3000);
-        };
+        // --- FUNÇÕES DE UI ---
+        const showMessage = (message, type = 'success') => {
+            messageBox.textContent = message;
+            messageBox.className = `text-center p-3 mb-6 rounded-lg ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+            setTimeout(() => messageBox.className = 'hidden', 3000);
+        };
 
-        const populateChecklists = () => {
-            const fruitContainer = document.getElementById('fruit-checklist');
-            fruitContainer.innerHTML = MEALS.map(meal => `<div class="flex items-center"><input type="checkbox" id="fruit-${meal.replace(/\s/g, '')}" name="fruit-meal" value="${meal}" class="h-4 w-4 rounded border-gray-300"><label for="fruit-${meal.replace(/\s/g, '')}" class="ml-2">${meal}</label></div>`).join('');
-            const selfcareContainer = document.getElementById('selfcare-checklist');
-            selfcareContainer.innerHTML = SELFCARE_ACTIVITIES.map(activity => `<div class="flex items-center"><input type="checkbox" id="selfcare-${activity.replace(/\s/g, '')}" name="selfcare-activity" value="${activity}" class="h-4 w-4 rounded border-gray-300"><label for="selfcare-${activity.replace(/\s/g, '')}" class="ml-2">${activity}</label></div>`).join('');
-        };
+        const populateChecklists = () => {
+            const fruitContainer = document.getElementById('fruit-checklist');
+            fruitContainer.innerHTML = MEALS.map(meal => `<div class="flex items-center"><input type="checkbox" id="fruit-${meal.replace(/\s/g, '')}" name="fruit-meal" value="${meal}" class="h-4 w-4 rounded border-gray-300"><label for="fruit-${meal.replace(/\s/g, '')}" class="ml-2">${meal}</label></div>`).join('');
+            const selfcareContainer = document.getElementById('selfcare-checklist');
+            selfcareContainer.innerHTML = SELFCARE_ACTIVITIES.map(activity => `<div class="flex items-center"><input type="checkbox" id="selfcare-${activity.replace(/\s/g, '')}" name="selfcare-activity" value="${activity}" class="h-4 w-4 rounded border-gray-300"><label for="selfcare-${activity.replace(/\s/g, '')}" class="ml-2">${activity}</label></div>`).join('');
+        };
 
-        // --- LÓGICA DE CÁLCULO GERAL ---
-        const calculateAllScores = (participantName) => {
-            const participantData = state.allData[participantName] || { dailyLogs: {} };
-            const scores = { total: 0, weekly: 0, monthly: 0 };
-            const today = new Date();
-            const currentWeekKey = getChallengeWeekKey(today);
-            const currentMonthKey = getMonthKey(today);
-            const weeklyAggregates = {};
+        // --- LÓGICA DE CÁLCULO GERAL ---
+        const calculateAllScores = (participantName) => {
+            const participantData = state.allData[participantName] || { dailyLogs: {} };
+            const scores = { total: 0, weekly: 0, monthly: 0 };
+            const today = new Date();
+            const currentWeekKey = getChallengeWeekKey(today);
+            const currentMonthKey = getMonthKey(today);
+            const weeklyAggregates = {};
 
-            for (const dateKey in participantData.dailyLogs) {
-                const logDate = new Date(dateKey + 'T12:00:00');
-                const weekKey = getChallengeWeekKey(logDate);
-                if (!weekKey) continue;
-                if (!weeklyAggregates[weekKey]) {
-                    weeklyAggregates[weekKey] = { aerobicMinutes: 0, strengthSessions: 0, selfCareDone: false, dailyPoints: 0, month: getMonthKey(logDate) };
-                }
-                const inputs = participantData.dailyLogs[dateKey].inputs;
-                weeklyAggregates[weekKey].aerobicMinutes += inputs.aerobicMinutes;
-                weeklyAggregates[weekKey].strengthSessions += inputs.strengthSessions;
-                if (inputs.selfCareActivities.length > 0) weeklyAggregates[weekKey].selfCareDone = true;
-                weeklyAggregates[weekKey].dailyPoints += getFruitScore(inputs.fruitPortions) + (inputs.hydration ? 5 : 0) + (inputs.noSweets ? 2 : 0) + (inputs.sleep ? 5 : 0);
-            }
+            for (const dateKey in participantData.dailyLogs) {
+                const logDate = new Date(dateKey + 'T12:00:00');
+                const weekKey = getChallengeWeekKey(logDate);
+                if (!weekKey) continue;
+                if (!weeklyAggregates[weekKey]) {
+                    weeklyAggregates[weekKey] = { aerobicMinutes: 0, strengthSessions: 0, selfCareDone: false, dailyPoints: 0, month: getMonthKey(logDate) };
+                }
+                const inputs = participantData.dailyLogs[dateKey].inputs;
+                weeklyAggregates[weekKey].aerobicMinutes += inputs.aerobicMinutes;
+                weeklyAggregates[weekKey].strengthSessions += inputs.strengthSessions;
+                if (inputs.selfCareActivities.length > 0) weeklyAggregates[weekKey].selfCareDone = true;
+                weeklyAggregates[weekKey].dailyPoints += getFruitScore(inputs.fruitPortions) + (inputs.hydration ? 5 : 0) + (inputs.noSweets ? 2 : 0) + (inputs.sleep ? 5 : 0);
+            }
 
-            for (const weekKey in weeklyAggregates) {
-                const weekData = weeklyAggregates[weekKey];
-                const weekScore = getAerobicScore(weekData.aerobicMinutes) + getStrengthScore(weekData.strengthSessions) + (weekData.selfCareDone ? 10 : 0) + weekData.dailyPoints;
-                scores.total += weekScore;
-                if (weekKey === currentWeekKey) scores.weekly = weekScore;
-                if (weekData.month === currentMonthKey) scores.monthly += weekScore;
-            }
-            return { name: participantName, ...scores };
-        };
+            for (const weekKey in weeklyAggregates) {
+                const weekData = weeklyAggregates[weekKey];
+                const weekScore = getAerobicScore(weekData.aerobicMinutes) + getStrengthScore(weekData.strengthSessions) + (weekData.selfCareDone ? 10 : 0) + weekData.dailyPoints;
+                scores.total += weekScore;
+                if (weekKey === currentWeekKey) scores.weekly = weekScore;
+                if (weekData.month === currentMonthKey) scores.monthly += weekScore;
+            }
+            return { name: participantName, ...scores };
+        };
 
-        const updateLeaderboardUI = () => {
-            const allScores = participants.map(calculateAllScores).sort((a, b) => b.total - a.total);
-            leaderboardContainer.innerHTML = allScores.map((score, index) => {
-                const medal = ['🥇', '🥈', '🥉'][index] || '🔹';
-                return `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border"><div class="flex items-center"><span class="text-xl w-8">${medal}</span><span class="font-bold">${score.name}</span></div><div class="text-right"><div class="text-lg font-bold text-teal-600">${score.total} <span class="text-xs font-normal">Total</span></div><div class="text-xs text-gray-500">Semana: ${score.weekly} | Mês: ${score.monthly}</div></div></div>`;
-            }).join('');
-        };
+        const updateLeaderboardUI = () => {
+            const allScores = participants.map(calculateAllScores).sort((a, b) => b.total - a.total);
+            leaderboardContainer.innerHTML = allScores.map((score, index) => {
+                const medal = ['🥇', '🥈', '🥉'][index] || '🔹';
+                return `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border"><div class="flex items-center"><span class="text-xl w-8">${medal}</span><span class="font-bold">${score.name}</span></div><div class="text-right"><div class="text-lg font-bold text-teal-600">${score.total} <span class="text-xs font-normal">Total</span></div><div class="text-xs text-gray-500">Semana: ${score.weekly} | Mês: ${score.monthly}</div></div></div>`;
+            }).join('');
+        };
 
-        // --- LÓGICA DO RESUMO ---
-        const showSummary = () => {
-            const { selectedParticipant, selectedDate } = state;
-            const dateKey = getFormattedDateKey(selectedDate);
-            const weekKey = getChallengeWeekKey(selectedDate);
-            const allScores = calculateAllScores(selectedParticipant);
-            const dailyInputs = state.allData[selectedParticipant].dailyLogs[dateKey].inputs;
+        // --- LÓGICA DO RESUMO ---
+        const createProgressBar = (label, value, max, color) => {
+            const percentage = max > 0 ? (value / max) * 100 : 0;
+            return `
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <span class="font-semibold text-gray-700">${label}</span>
+                        <span class="text-gray-600">${value} / ${max}</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                        <div class="bg-${color}-500 h-2.5 rounded-full" style="width: ${percentage}%"></div>
+                    </div>
+                </div>`;
+        };
 
-            const dailyFruitPts = getFruitScore(dailyInputs.fruitPortions);
-            const dailyHydrationPts = dailyInputs.hydration ? 5 : 0;
-            const dailyNoSweetsPts = dailyInputs.noSweets ? 2 : 0;
-            const dailySleepPts = dailyInputs.sleep ? 5 : 0;
-            const dailyTotal = dailyFruitPts + dailyHydrationPts + dailyNoSweetsPts + dailySleepPts;
+        const showSummary = () => {
+            const { selectedParticipant, selectedDate } = state;
+            const dateKey = getFormattedDateKey(selectedDate);
+            const weekKey = getChallengeWeekKey(selectedDate);
+            const allScores = calculateAllScores(selectedParticipant);
+            const dailyInputs = state.allData[selectedParticipant].dailyLogs[dateKey].inputs;
 
-            let weekAerobicMinutes = 0, weekStrengthSessions = 0, weekSelfCareDone = false;
-            for (const dKey in state.allData[selectedParticipant].dailyLogs) {
-                if (getChallengeWeekKey(new Date(dKey + 'T12:00:00')) === weekKey) {
-                    const log = state.allData[selectedParticipant].dailyLogs[dKey].inputs;
-                    weekAerobicMinutes += log.aerobicMinutes;
-                    weekStrengthSessions += log.strengthSessions;
-                    if (log.selfCareActivities.length > 0) weekSelfCareDone = true;
-                }
-            }
+            const dailyFruitPts = getFruitScore(dailyInputs.fruitPortions);
+            const dailyHydrationPts = dailyInputs.hydration ? 5 : 0;
+            const dailyNoSweetsPts = dailyInputs.noSweets ? 2 : 0;
+            const dailySleepPts = dailyInputs.sleep ? 5 : 0;
+            const dailyTotal = dailyFruitPts + dailyHydrationPts + dailyNoSweetsPts + dailySleepPts;
 
-            document.getElementById('summary-name').textContent = selectedParticipant;
-            document.getElementById('summary-date').textContent = selectedDate.toLocaleDateString('pt-BR');
-            document.getElementById('summary-daily-total').textContent = dailyTotal;
-            document.getElementById('summary-weekly-total').textContent = allScores.weekly;
-            document.getElementById('summary-monthly-total').textContent = allScores.monthly;
-            document.getElementById('summary-general-total').textContent = allScores.total;
+            let weekAerobicMinutes = 0, weekStrengthSessions = 0, weekSelfCareDone = false;
+            for (const dKey in state.allData[selectedParticipant].dailyLogs) {
+                if (getChallengeWeekKey(new Date(dKey + 'T12:00:00')) === weekKey) {
+                    const log = state.allData[selectedParticipant].dailyLogs[dKey].inputs;
+                    weekAerobicMinutes += log.aerobicMinutes;
+                    weekStrengthSessions += log.strengthSessions;
+                    if (log.selfCareActivities.length > 0) weekSelfCareDone = true;
+                }
+            }
 
-            document.getElementById('summary-details').innerHTML = `<h3 class="font-bold mb-2 text-gray-700">Pontos do dia (${dailyTotal} pts):</h3><ul class="list-disc list-inside space-y-1"><li>Frutas/Vegetais: ${dailyFruitPts} pts (${dailyInputs.fruitPortions} porções)</li><li>Hidratação: ${dailyHydrationPts} pts</li><li>Sem Doces: ${dailyNoSweetsPts} pts</li><li>Sono: ${dailySleepPts} pts</li></ul>`;
-            
-            const aerobicNeeded = Math.max(0, 150 - weekAerobicMinutes);
-            const strengthNeeded = Math.max(0, 2 - weekStrengthSessions);
-            document.getElementById('summary-progress').innerHTML = `<h3 class="font-bold mb-2 text-gray-700">Progresso na Semana:</h3><ul class="list-disc list-inside space-y-1"><li>Aeróbico: ${weekAerobicMinutes} min (Faltam ${aerobicNeeded} min para meta máxima)</li><li>Força: ${weekStrengthSessions} sessões (Faltam ${strengthNeeded} para meta máxima)</li><li>Bem-estar: ${weekSelfCareDone ? 'Meta cumprida' : 'Pendente'}</li></ul>`;
+            document.getElementById('summary-name').textContent = selectedParticipant;
+            document.getElementById('summary-date').textContent = selectedDate.toLocaleDateString('pt-BR');
+            document.getElementById('summary-daily-total').textContent = dailyTotal;
+            document.getElementById('summary-weekly-total').textContent = allScores.weekly;
+            document.getElementById('summary-monthly-total').textContent = allScores.monthly;
+            document.getElementById('summary-general-total').textContent = allScores.total;
 
-            summaryModal.classList.remove('hidden');
-        };
+            document.getElementById('summary-details').innerHTML = `
+                <h3 class="font-bold mb-2 text-gray-700">Pontos do dia (${dailyTotal} pts):</h3>
+                ${createProgressBar('Frutas/Vegetais', dailyFruitPts, 10, 'green')}
+                ${createProgressBar('Hidratação', dailyHydrationPts, 5, 'sky')}
+                ${createProgressBar('Sem Doces', dailyNoSweetsPts, 2, 'red')}
+                ${createProgressBar('Sono', dailySleepPts, 5, 'indigo')}
+            `;
+            
+            document.getElementById('summary-progress').innerHTML = `
+                <h3 class="font-bold mb-2 text-gray-700">Progresso na Semana:</h3>
+                ${createProgressBar('Aeróbico (min)', weekAerobicMinutes, 150, 'orange')}
+                ${createProgressBar('Força (sessões)', weekStrengthSessions, 2, 'rose')}
+                ${createProgressBar('Bem-estar', weekSelfCareDone ? 1 : 0, 1, 'teal')}
+            `;
 
-        // --- LÓGICA DE EXPORTAÇÃO ---
-        document.getElementById('export-png-btn').addEventListener('click', () => {
-            html2canvas(document.getElementById('summary-content'), { scale: 2 }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `resumo_${state.selectedParticipant}_${getFormattedDateKey(state.selectedDate)}.png`;
-                link.href = canvas.toDataURL();
-                link.click();
-            });
-        });
+            summaryModal.classList.remove('hidden');
+        };
 
-        document.getElementById('export-xls-btn').addEventListener('click', () => {
-            const { selectedParticipant, selectedDate } = state;
-            const allScores = calculateAllScores(selectedParticipant);
-            const dailyInputs = state.allData[selectedParticipant].dailyLogs[getFormattedDateKey(selectedDate)].inputs;
-            const dailyTotal = getFruitScore(dailyInputs.fruitPortions) + (dailyInputs.hydration ? 5 : 0) + (dailyInputs.noSweets ? 2 : 0) + (dailyInputs.sleep ? 5 : 0);
+        // --- LÓGICA DE EXPORTAÇÃO ---
+        document.getElementById('export-png-btn').addEventListener('click', () => {
+            html2canvas(document.getElementById('summary-content'), { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `resumo_${state.selectedParticipant}_${getFormattedDateKey(state.selectedDate)}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        });
 
-            const data = [
-                ["Desafio da Saúde - Resumo Detalhado"],
-                ["Participante", selectedParticipant], ["Data", selectedDate.toLocaleDateString('pt-BR')],
-                [],
-                ["Categoria", "Valor", "Pontos"],
-                ["Minutos Aeróbicos (dia)", dailyInputs.aerobicMinutes, "-"],
-                ["Sessões de Força (dia)", dailyInputs.strengthSessions, "-"],
-                ["Porções Frutas/Vegetais", dailyInputs.fruitPortions, getFruitScore(dailyInputs.fruitPortions)],
-                ["Hidratação (2L+)", dailyInputs.hydration ? "Sim" : "Não", dailyInputs.hydration ? 5 : 0],
-                ["Sem Doces/etc", dailyInputs.noSweets ? "Sim" : "Não", dailyInputs.noSweets ? 2 : 0],
-                ["Sono (7h+)", dailyInputs.sleep ? "Sim" : "Não", dailyInputs.sleep ? 5 : 0],
-                [],
-                ["Resumo de Pontos"],
-                ["Pontuação do Dia", dailyTotal],
-                ["Pontuação da Semana", allScores.weekly],
-                ["Pontuação do Mês", allScores.monthly],
-                ["Pontuação Geral", allScores.total],
-            ];
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Resumo");
-            XLSX.writeFile(wb, `resumo_detalhado_${selectedParticipant}_${getFormattedDateKey(selectedDate)}.xls`);
-        });
+        document.getElementById('export-xls-btn').addEventListener('click', () => {
+            const { selectedParticipant, selectedDate } = state;
+            const allScores = calculateAllScores(selectedParticipant);
+            const dailyInputs = state.allData[selectedParticipant].dailyLogs[getFormattedDateKey(selectedDate)].inputs;
+            const dailyTotal = getFruitScore(dailyInputs.fruitPortions) + (dailyInputs.hydration ? 5 : 0) + (dailyInputs.noSweets ? 2 : 0) + (dailyInputs.sleep ? 5 : 0);
 
-        document.getElementById('close-summary-btn').addEventListener('click', () => {
-            summaryModal.classList.add('hidden');
-            setupScreen.classList.remove('hidden');
-            mainApp.classList.add('hidden');
-            setupDate.value = '';
-            setupParticipant.value = '';
-            confirmDetails.classList.add('hidden');
-            confirmBtn.disabled = true;
-        });
+            const data = [
+                ["Desafio da Saúde - Resumo Detalhado"],
+                ["Participante", selectedParticipant], ["Data", selectedDate.toLocaleDateString('pt-BR')],
+                [],
+                ["Categoria", "Valor", "Pontos"],
+                ["Minutos Aeróbicos (dia)", dailyInputs.aerobicMinutes, "-"],
+                ["Sessões de Força (dia)", dailyInputs.strengthSessions, "-"],
+                ["Porções Frutas/Vegetais", dailyInputs.fruitPortions, getFruitScore(dailyInputs.fruitPortions)],
+                ["Hidratação (2L+)", dailyInputs.hydration ? "Sim" : "Não", dailyInputs.hydration ? 5 : 0],
+                ["Sem Doces/etc", dailyInputs.noSweets ? "Sim" : "Não", dailyInputs.noSweets ? 2 : 0],
+                ["Sono (7h+)", dailyInputs.sleep ? "Sim" : "Não", dailyInputs.sleep ? 5 : 0],
+                [],
+                ["Resumo de Pontos"],
+                ["Pontuação do Dia", dailyTotal],
+                ["Pontuação da Semana", allScores.weekly],
+                ["Pontuação do Mês", allScores.monthly],
+                ["Pontuação Geral", allScores.total],
+            ];
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Resumo");
+            XLSX.writeFile(wb, `resumo_detalhado_${selectedParticipant}_${getFormattedDateKey(selectedDate)}.xls`);
+        });
 
-        // --- LÓGICA DE SETUP E EVENTOS ---
-        const checkSetupValidity = () => {
-            const dateVal = setupDate.value;
-            const participantVal = setupParticipant.value;
-            if (dateVal && participantVal) {
-                const selectedDate = new Date(dateVal + 'T12:00:00');
-                if (selectedDate < challengeStartDate) {
-                    confirmBtn.disabled = true;
-                    showMessage('A data não pode ser anterior ao início do desafio.', 'error');
-                    confirmDetails.classList.add('hidden'); return;
-                }
-                state.selectedDate = selectedDate;
-                state.selectedParticipant = participantVal;
-                confirmName.textContent = participantVal;
-                confirmDate.textContent = selectedDate.toLocaleDateString('pt-BR');
-                confirmDetails.classList.remove('hidden');
-                confirmBtn.disabled = false;
-            } else {
-                confirmBtn.disabled = true;
-                confirmDetails.classList.add('hidden');
-            }
-        };
+        document.getElementById('close-summary-btn').addEventListener('click', () => {
+            summaryModal.classList.add('hidden');
+            setupScreen.classList.remove('hidden');
+            mainApp.classList.add('hidden');
+            setupDate.value = '';
+            setupParticipant.value = '';
+            confirmDetails.classList.add('hidden');
+            confirmBtn.disabled = true;
+        });
 
-        setupDate.addEventListener('change', checkSetupValidity);
-        setupParticipant.addEventListener('change', checkSetupValidity);
+        // --- LÓGICA DE SETUP E EVENTOS ---
+        const checkSetupValidity = () => {
+            const dateVal = setupDate.value;
+            const participantVal = setupParticipant.value;
+            if (dateVal && participantVal) {
+                const selectedDate = new Date(dateVal + 'T12:00:00');
+                if (selectedDate < challengeStartDate) {
+                    confirmBtn.disabled = true;
+                    showMessage('A data não pode ser anterior ao início do desafio.', 'error');
+                    confirmDetails.classList.add('hidden'); return;
+                }
+                state.selectedDate = selectedDate;
+                state.selectedParticipant = participantVal;
+                confirmName.textContent = participantVal;
+                confirmDate.textContent = selectedDate.toLocaleDateString('pt-BR');
+                confirmDetails.classList.remove('hidden');
+                confirmBtn.disabled = false;
+            } else {
+                confirmBtn.disabled = true;
+                confirmDetails.classList.add('hidden');
+            }
+        };
 
-        confirmBtn.addEventListener('click', () => {
-            setupScreen.classList.add('hidden');
-            mainApp.classList.remove('hidden');
-            document.getElementById('current-participant-name').textContent = state.selectedParticipant;
-            document.getElementById('current-checkin-date').textContent = state.selectedDate.toLocaleDateString('pt-BR');
-            const dateKey = getFormattedDateKey(state.selectedDate);
-            const participantLogs = state.allData[state.selectedParticipant]?.dailyLogs || {};
-            if (participantLogs[dateKey]) {
-                checkinForm.classList.add('hidden');
-                showMessage('Check-in para este dia já foi realizado.', 'error');
-            } else {
-                 checkinForm.classList.remove('hidden');
-                 checkinForm.reset();
-            }
-            updateLeaderboardUI();
-        });
+        setupDate.addEventListener('change', checkSetupValidity);
+        setupParticipant.addEventListener('change', checkSetupValidity);
 
-        checkinForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            confirmBtn.disabled = true;
-            confirmBtn.textContent = "A Guardar...";
-            
-            const dateKey = getFormattedDateKey(state.selectedDate);
-            const inputs = {
-                aerobicMinutes: Number(document.getElementById('aerobic-minutes').value) || 0,
-                strengthSessions: Number(document.getElementById('strength-sessions').value) || 0,
-                fruitPortions: document.querySelectorAll('input[name="fruit-meal"]:checked').length,
-                hydration: document.getElementById('hydration').checked,
-                noSweets: document.getElementById('no-sweets').checked,
-                sleep: document.getElementById('sleep').checked,
-                selfCareActivities: Array.from(document.querySelectorAll('input[name="selfcare-activity"]:checked')).map(el => el.value)
-            };
+        confirmBtn.addEventListener('click', () => {
+            setupScreen.classList.add('hidden');
+            mainApp.classList.remove('hidden');
+            document.getElementById('current-participant-name').textContent = state.selectedParticipant;
+            document.getElementById('current-checkin-date').textContent = state.selectedDate.toLocaleDateString('pt-BR');
+            const dateKey = getFormattedDateKey(state.selectedDate);
+            const participantLogs = state.allData[state.selectedParticipant]?.dailyLogs || {};
+            if (participantLogs[dateKey]) {
+                checkinForm.classList.add('hidden');
+                showMessage('Check-in para este dia já foi realizado.', 'error');
+            } else {
+                 checkinForm.classList.remove('hidden');
+                 checkinForm.reset();
+            }
+            updateLeaderboardUI();
+        });
 
-            try {
-                const participantRef = doc(state.db, `artifacts/${state.appId}/public/data/healthChallenge`, state.selectedParticipant);
-                const currentData = state.allData[state.selectedParticipant] || { dailyLogs: {} };
-                currentData.dailyLogs[dateKey] = { inputs };
-                await setDoc(participantRef, currentData);
-                showMessage('Check-in guardado com sucesso!', 'success');
-                showSummary();
-            } catch (error) {
-                console.error("Erro ao guardar no Firestore:", error);
-      _message('Erro ao guardar os dados. Tente novamente.', 'error');
-            } finally {
-                confirmBtn.disabled = false;
-                confirmBtn.textContent = "Confirmar e Continuar";
-            }
-        });
+        checkinForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = document.getElementById('submit-checkin-btn');
+            submitButton.disabled = true;
+            submitButton.textContent = "A Guardar...";
+            
+            const dateKey = getFormattedDateKey(state.selectedDate);
+            const inputs = {
+                aerobicMinutes: Number(document.getElementById('aerobic-minutes').value) || 0,
+                strengthSessions: Number(document.getElementById('strength-sessions').value) || 0,
+                fruitPortions: document.querySelectorAll('input[name="fruit-meal"]:checked').length,
+                hydration: document.getElementById('hydration').checked,
+                noSweets: document.getElementById('no-sweets').checked,
+                sleep: document.getElementById('sleep').checked,
+                selfCareActivities: Array.from(document.querySelectorAll('input[name="selfcare-activity"]:checked')).map(el => el.value)
+            };
 
-        // --- INICIALIZAÇÃO ---
-        const init = async () => {
-            if (new Date() < challengeStartDate) {
-                document.getElementById('app-container').innerHTML = `<div class="text-center p-10 bg-white rounded-lg shadow-md"><h1 class="text-2xl font-bold text-teal-600">O Desafio ainda não começou!</h1><p class="mt-2">Volte em ${challengeStartDate.toLocaleDateString('pt-BR')}.</p></div>`;
-                return;
-            }
+            try {
+                const participantRef = doc(state.db, `artifacts/${state.appId}/public/data/healthChallenge`, state.selectedParticipant);
+                const currentData = state.allData[state.selectedParticipant] || { dailyLogs: {} };
+                currentData.dailyLogs[dateKey] = { inputs };
+                await setDoc(participantRef, currentData);
+                showMessage('Check-in guardado com sucesso!', 'success');
+                showSummary();
+            } catch (error) {
+                console.error("Erro ao guardar no Firestore:", error);
+                showMessage('Erro ao guardar os dados. Tente novamente.', 'error');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = "Finalizar Check-in";
+            }
+        });
 
-            try {
+        // --- INICIALIZAÇÃO ---
+        const init = async () => {
+            if (new Date() < challengeStartDate) {
+                document.getElementById('app-container').innerHTML = `<div class="text-center p-10 bg-white rounded-lg shadow-md"><h1 class="text-2xl font-bold text-teal-600">O Desafio ainda não começou!</h1><p class="mt-2">Volte em ${challengeStartDate.toLocaleDateString('pt-BR')}.</p></div>`;
+                return;
+            }
+
+            try {
                 const firebaseConfig = {
                     apiKey: "AIzaSyCzVuw8VwY2e0qr1DngYQdp4En5je4HmyI",
                     authDomain: "desafio-explorar-vizinhanca.firebaseapp.com",
@@ -459,38 +488,41 @@
                     appId: "1:535102451702:web:b626d741c44952c78da1d7"
                 };
 
-                const app = initializeApp(firebaseConfig);
-                const auth = getAuth(app);
-                state.db = getFirestore(app);
-                
-                // Lógica de autenticação simplificada para ambientes estáticos
-                await signInAnonymously(auth);
+                const app = initializeApp(firebaseConfig);
+                const auth = getAuth(app);
+                state.db = getFirestore(app);
+                
+                await signInAnonymously(auth);
 
-                const collectionRef = collection(state.db, `artifacts/${state.appId}/public/data/healthChallenge`);
-                onSnapshot(collectionRef, (snapshot) => {
-                    snapshot.docs.forEach(doc => {
-                        state.allData[doc.id] = doc.data();
-                    });
-                    if (document.getElementById('main-app').classList.contains('hidden') === false) {
-                       updateLeaderboardUI();
-                    }
-                }, (error) => {
-                    console.error("Erro no listener do Snapshot:", error);
-                    showMessage("Erro ao carregar dados em tempo real.", "error");
-                });
+                const collectionRef = collection(state.db, `artifacts/${state.appId}/public/data/healthChallenge`);
+                onSnapshot(collectionRef, (snapshot) => {
+                    snapshot.docs.forEach(doc => {
+                        state.allData[doc.id] = doc.data();
+                    });
+                    if (document.getElementById('main-app').classList.contains('hidden') === false) {
+                       updateLeaderboardUI();
+                    }
+                }, (error) => {
+                    console.error("Erro no listener do Snapshot:", error);
+                    showMessage("Erro ao carregar dados em tempo real.", "error");
+                });
 
-                setupParticipant.innerHTML = '<option value="">-- Selecione --</option>' + participants.map(p => `<option value="${p}">${p}</option>`).join('');
-                populateChecklists();
-                loadingScreen.classList.add('hidden');
-                setupScreen.classList.remove('hidden');
+                setupParticipant.innerHTML = '<option value="">-- Selecione --</option>' + participants.map(p => `<option value="${p}">${p}</option>`).join('');
+                populateChecklists();
+                loadingScreen.classList.add('hidden');
+                setupScreen.classList.remove('hidden');
 
-            } catch (error) {
-                console.error("Erro na inicialização do Firebase:", error);
-                loadingScreen.innerHTML = `<p class="text-red-500">Erro ao ligar com o servidor. Verifique a consola para mais detalhes.</p>`;
-            }
-        };
+            } catch (error) {
+                console.error("Erro na inicialização do Firebase:", error);
+                if (error.code === 'auth/admin-restricted-operation') {
+                    loadingScreen.innerHTML = `<p class="text-red-500"><b>Erro de Configuração:</b> A autenticação anónima não está ativada no seu projeto Firebase. Por favor, ative-a no Console do Firebase em Build > Authentication > Sign-in method.</p>`;
+                } else {
+                    loadingScreen.innerHTML = `<p class="text-red-500">Erro ao ligar com o servidor. Verifique se colou corretamente as chaves de configuração do Firebase.</p>`;
+                }
+            }
+        };
 
-        init();
-    </script>
+        init();
+    </script>
 </body>
-</html>
+</ht
