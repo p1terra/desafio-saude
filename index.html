@@ -70,9 +70,12 @@
                 <div id="confirmation-details" class="hidden text-center bg-gray-100 p-3 rounded-lg">
                     <p>Registrando para <strong id="confirm-name"></strong> no dia <strong id="confirm-date"></strong>.</p>
                 </div>
-                <button id="confirm-setup-btn" disabled class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200">Confirmar e Continuar</button>        
+                <button id="confirm-setup-btn" disabled class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200">Confirmar e Continuar</button>
             </div>
-            <img src="imagens/laVamosNos.gif" alt="Bruxa lá vamos nós" class="mx-auto w-full max-w-md rounded-lg mt-6">
+            <div class="max-w-md mx-auto text-center">
+                <img src="imagens/laVamosNos.gif" alt="Bruxa lá vamos nós" class="mx-auto w-full max-w-md rounded-lg mt-6">
+                <button id="ranking-btn" class="mt-4 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200">Ver Ranking</button>
+            </div>
         </div>
 
         <!-- TELA PRINCIPAL DO APP (Check-in e Ranking) -->
@@ -180,6 +183,19 @@
             </div>
         </div>
 
+        <!-- TELA DE RANKING (MODAL) -->
+        <div id="ranking-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg">
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold text-center text-teal-600 mb-4">Ranking Detalhado</h2>
+                    <div id="ranking-modal-list" class="space-y-3"></div>
+                </div>
+                <div class="p-4 bg-gray-100 rounded-b-xl text-center">
+                    <button id="close-ranking-btn" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600">Fechar</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
@@ -207,6 +223,7 @@
         const setupScreen = document.getElementById('setup-screen');
         const mainApp = document.getElementById('main-app');
         const thankYouScreen = document.getElementById('thank-you-screen');
+        const rankingModal = document.getElementById('ranking-modal');
         const setupDate = document.getElementById('setup-date');
         const setupParticipant = document.getElementById('setup-participant');
         const confirmDetails = document.getElementById('confirmation-details');
@@ -311,7 +328,16 @@
             const allScores = participants.map(calculateAllScores).sort((a, b) => b.total - a.total);
             leaderboardContainer.innerHTML = allScores.map((score, index) => {
                 const medal = ['🥇', '🥈', '🥉'][index] || '🔹';
-                return `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border"><div class="flex items-center"><span class="text-xl w-8">${medal}</span><span class="font-bold">${score.name}</span></div><div class="text-right"><div class="text-lg font-bold text-teal-600">${score.total} <span class="text-xs font-normal">Total</span></div><div class="text-xs text-gray-500">Semana: ${score.weekly} | Mês: ${score.monthly}</div></div></div>`;
+                return `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border"><div class="flex items-center"><span class="text-xl w-8">${medal}</span><span class="font-bold">${score.name}</span></div><div class="text-right"><div class="text-lg font-bold text-teal-600">${score.total} <span class="text-xs font-normal">Total</span></div></div></div>`;
+            }).join('');
+        };
+        
+        const updateRankingModalUI = () => {
+            const allScores = participants.map(calculateAllScores).sort((a, b) => b.total - a.total);
+            const rankingList = document.getElementById('ranking-modal-list');
+            rankingList.innerHTML = allScores.map((score, index) => {
+                const medal = ['🥇', '🥈', '🥉'][index] || '🔹';
+                return `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border"><div class="flex items-center"><span class="text-xl w-8">${medal}</span><span class="font-bold">${score.name}</span></div><div class="text-right text-xs text-gray-600"><div>Geral: <span class="font-bold">${score.total}</span></div><div>Semana: <span class="font-bold">${score.weekly}</span></div><div>Mês: <span class="font-bold">${score.monthly}</span></div></div></div>`;
             }).join('');
         };
 
@@ -371,7 +397,7 @@
             document.getElementById('summary-progress').innerHTML = `
                 <h3 class="font-bold mb-2 text-gray-700">Progresso na Semana:</h3>
                 ${createProgressBar('Aeróbico (min)', weekAerobicMinutes, 150, 'orange')}
-                ${createProgressBar('Força (sessões)', weekStrengthSessions, 2, 'rose')}
+                ${createProgressBar('Força (sessões)', Math.min(weekStrengthSessions, 2), 2, 'rose')}
                 ${createProgressBar('Bem-estar', weekSelfCareDone ? 1 : 0, 1, 'teal')}
             `;
 
@@ -431,6 +457,15 @@
             setupParticipant.value = '';
             confirmDetails.classList.add('hidden');
             confirmBtn.disabled = true;
+        });
+
+        document.getElementById('ranking-btn').addEventListener('click', () => {
+            updateRankingModalUI();
+            rankingModal.classList.remove('hidden');
+        });
+
+        document.getElementById('close-ranking-btn').addEventListener('click', () => {
+            rankingModal.classList.add('hidden');
         });
 
         // --- LÓGICA DE SETUP E EVENTOS ---
@@ -565,9 +600,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
