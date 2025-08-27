@@ -180,7 +180,7 @@
             selectedDate: null,
             allData: {}, // Armazena todos os dados de todos os participantes
             db: null,
-            appId: typeof __app_id !== 'undefined' ? __app_id : 'default-health-challenge'
+            appId: 'desafio-explorar-vizinhanca' // Usando o ID do projeto diretamente
         };
 
         // --- ELEMENTOS DO DOM ---
@@ -450,18 +450,21 @@
             }
 
             try {
-                // Use as variáveis globais fornecidas pelo ambiente
-                const firebaseConfig = JSON.parse(__firebase_config);
+                const firebaseConfig = {
+                    apiKey: "AIzaSyCzVuw8VwY2e0qr1DngYQdp4En5je4HmyI",
+                    authDomain: "desafio-explorar-vizinhanca.firebaseapp.com",
+                    projectId: "desafio-explorar-vizinhanca",
+                    storageBucket: "desafio-explorar-vizinhanca.firebasestorage.app",
+                    messagingSenderId: "535102451702",
+                    appId: "1:535102451702:web:b626d741c44952c78da1d7"
+                };
+
                 const app = initializeApp(firebaseConfig);
                 const auth = getAuth(app);
                 state.db = getFirestore(app);
                 
-                // Lógica de autenticação corrigida
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                // Lógica de autenticação simplificada para ambientes estáticos
+                await signInAnonymously(auth);
 
                 const collectionRef = collection(state.db, `artifacts/${state.appId}/public/data/healthChallenge`);
                 onSnapshot(collectionRef, (snapshot) => {
@@ -490,4 +493,4 @@
         init();
     </script>
 </body>
-</ht
+</html>
