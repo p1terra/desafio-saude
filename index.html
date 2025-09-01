@@ -74,7 +74,7 @@
             </div>
             <div class="max-w-md mx-auto text-center">
                 <img src="imagens/logo_1.png" alt="logo" class="mx-auto w-full max-w-md rounded-lg mt-6">
-                <div class="flex gap-4 mt-4">
+                 <div class="flex gap-4 mt-4">
                     <button id="ranking-btn" class="flex-1 bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200">Ver Ranking</button>
                     <button id="weekly-report-btn" class="flex-1 bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200">Relatório Semanal</button>
                 </div>
@@ -180,7 +180,28 @@
         </div>
         
         <!-- TELA FINAL -->
-        <div id="thank-you-screen" class="hidden fixed inset-0 text-center flex flex-col items-center justify-center bg-cover bg-center z-40">
+        <div id="thank-you-screen" class="hidden fixed inset-0 text-center flex flex-col items-center justify-center bg-cover bg-center z-40 p-4">
+             <div id="motivational-card" class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md mx-auto mb-6">
+                 <p id="motivational-quote" class="text-center text-lg italic text-gray-700 mb-4"></p>
+                 <h3 class="font-bold text-center text-teal-600 mb-2 border-t pt-4">Tabela de Pontos</h3>
+                 <table class="w-full text-sm text-left text-gray-600">
+                     <thead class="bg-gray-100">
+                         <tr>
+                             <th class="p-2 rounded-tl-lg">Categoria</th>
+                             <th class="p-2 rounded-tr-lg text-right">Pontos</th>
+                         </tr>
+                     </thead>
+                     <tbody>
+                         <tr class="border-b"><td class="p-2 font-semibold">Aeróbico (150 min/sem)</td><td class="p-2 text-right">até 20</td></tr>
+                         <tr class="border-b"><td class="p-2 font-semibold">Força (2x/sem)</td><td class="p-2 text-right">10</td></tr>
+                         <tr class="border-b"><td class="p-2 font-semibold">Frutas/Vegetais (5 porções/dia)</td><td class="p-2 text-right">10</td></tr>
+                         <tr class="border-b"><td class="p-2 font-semibold">Hidratação (2L/dia)</td><td class="p-2 text-right">5</td></tr>
+                         <tr class="border-b"><td class="p-2 font-semibold">Sem Doces (dia)</td><td class="p-2 text-right">2</td></tr>
+                         <tr class="border-b"><td class="p-2 font-semibold">Sono (7h+/noite)</td><td class="p-2 text-right">5</td></tr>
+                         <tr><td class="p-2 font-semibold">Cuidado Pessoal (1x/sem)</td><td class="p-2 text-right">10</td></tr>
+                     </tbody>
+                 </table>
+            </div>
             <div class="bg-black bg-opacity-50 p-8 rounded-xl">
                 <button id="add-another-checkin-btn" class="bg-teal-600 text-white font-bold text-xl py-4 px-8 rounded-lg hover:bg-teal-700 transition-colors duration-200 shadow-lg">Adicionar mais um check-in?</button>
             </div>
@@ -212,6 +233,13 @@
         const challengeStartDate = new Date('2025-08-25T00:00:00');
         const MEALS = ['Café da manhã', 'Lanche da manhã', 'Almoço', 'Lanche da tarde', 'Jantar', 'Ceia'];
         const SELFCARE_ACTIVITIES = ['Meditação', 'Alongamento', 'Caminhada na natureza', 'Ler um livro', 'Outras'];
+        const MOTIVATIONAL_QUOTES = [
+            "Cada passo conta. Continue em frente!",
+            "O seu corpo de amanhã agradece o seu esforço de hoje.",
+            "Pequenas escolhas, grandes resultados. Um dia de cada vez.",
+            "Consistência é a chave para o sucesso. Não desista!",
+            "Cuide do seu corpo. É o único lugar que você tem para viver."
+        ];
 
         let state = {
             selectedParticipant: null,
@@ -274,6 +302,12 @@
             fruitContainer.innerHTML = MEALS.map(meal => `<div class="flex items-center"><input type="checkbox" id="fruit-${meal.replace(/\s/g, '')}" name="fruit-meal" value="${meal}" class="h-4 w-4 rounded border-gray-300"><label for="fruit-${meal.replace(/\s/g, '')}" class="ml-2">${meal}</label></div>`).join('');
             const selfcareContainer = document.getElementById('selfcare-checklist');
             selfcareContainer.innerHTML = SELFCARE_ACTIVITIES.map(activity => `<div class="flex items-center"><input type="checkbox" id="selfcare-${activity.replace(/\s/g, '')}" name="selfcare-activity" value="${activity}" class="h-4 w-4 rounded border-gray-300"><label for="selfcare-${activity.replace(/\s/g, '')}" class="ml-2">${activity}</label></div>`).join('');
+        };
+        
+        const showMotivationalCard = () => {
+            const quoteElement = document.getElementById('motivational-quote');
+            const randomIndex = Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length);
+            quoteElement.textContent = `"${MOTIVATIONAL_QUOTES[randomIndex]}"`;
         };
         
         const prefillForm = (inputs) => {
@@ -513,6 +547,7 @@
         document.getElementById('close-summary-btn').addEventListener('click', () => {
             summaryModal.classList.add('hidden');
             mainApp.classList.add('hidden');
+            showMotivationalCard();
             thankYouScreen.classList.remove('hidden');
         });
 
@@ -668,3 +703,4 @@
     </script>
 </body>
 </html>
+
