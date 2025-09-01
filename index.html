@@ -74,7 +74,10 @@
             </div>
             <div class="max-w-md mx-auto text-center">
                 <img src="imagens/logo_1.png" alt="logo" class="mx-auto w-full max-w-md rounded-lg mt-6">
-                <button id="ranking-btn" class="mt-4 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200">Ver Ranking</button>
+                <div class="flex gap-4 mt-4">
+                    <button id="ranking-btn" class="flex-1 bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200">Ver Ranking</button>
+                    <button id="weekly-report-btn" class="flex-1 bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200">Relatório Semanal</button>
+                </div>
             </div>
         </div>
 
@@ -396,7 +399,7 @@
             
             document.getElementById('summary-progress').innerHTML = `
                 <h3 class="font-bold mb-2 text-gray-700">Progresso na Semana:</h3>
-                ${createProgressBar('Aeróbico (min)', weekAerobicMinutes, 150, 'orange')}
+                ${createProgressBar('Aeróbico (min)', Math.min(weekAerobicMinutes, 150), 150, 'orange')}
                 ${createProgressBar('Força (sessões)', Math.min(weekStrengthSessions, 2), 2, 'rose')}
                 ${createProgressBar('Bem-estar', weekSelfCareDone ? 1 : 0, 1, 'teal')}
             `;
@@ -405,6 +408,69 @@
         };
 
         // --- LÓGICA DE EXPORTAÇÃO ---
+        const exportWeeklyReport = () => {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const dayOfWeek = today.getDay(); 
+            
+            const lastSunday = new Date(today);
+            lastSunday.setDate(today.getDate() - (dayOfWeek === 0 ? 7 : dayOfWeek));
+
+            const lastMonday = new Date(lastSunday);
+            lastMonday.setDate(lastSunday.getDate() - 6);
+
+            if (lastMonday < challengeStartDate) {
+                alert("Ainda não há dados de uma semana completa para exportar.");
+                return;
+            }
+
+            const reportStartDate = getFormattedDateKey(lastMonday);
+            const reportEndDate = getFormattedDateKey(lastSunday);
+
+            const dataForSheet = [
+                ["Relatório Semanal do Desafio da Saúde"],
+                [`Período: ${lastMonday.toLocaleDateString('pt-BR')} a ${lastSunday.toLocaleDateString('pt-BR')}`],
+                [],
+                ["Participante", "Data", "Min Aeróbico", "Sessões Força", "Porções Frutas", "Hidratação", "Sem Doces", "Sono"]
+            ];
+
+            participants.forEach(participant => {
+                const participantData = state.allData[participant] || { dailyLogs: {} };
+                let hasDataForWeek = false;
+
+                const sortedDateKeys = Object.keys(participantData.dailyLogs).sort();
+                for (const dateKey of sortedDateKeys) {
+                    if (dateKey >= reportStartDate && dateKey <= reportEndDate) {
+                        hasDataForWeek = true;
+                        const inputs = participantData.dailyLogs[dateKey].inputs;
+                        dataForSheet.push([
+                            participant,
+                            new Date(dateKey + 'T12:00:00').toLocaleDateString('pt-BR'),
+                            inputs.aerobicMinutes,
+                            inputs.strengthSessions,
+                            inputs.fruitPortions,
+                            inputs.hydration ? 'Sim' : 'Não',
+                            inputs.noSweets ? 'Sim' : 'Não',
+                            inputs.sleep ? 'Sim' : 'Não'
+                        ]);
+                    }
+                }
+                if (hasDataForWeek) {
+                    dataForSheet.push([]);
+                }
+            });
+
+            if (dataForSheet.length <= 4) {
+                alert("Nenhum dado encontrado para a semana passada.");
+                return;
+            }
+
+            const ws = XLSX.utils.aoa_to_sheet(dataForSheet);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Relatório Semanal");
+            XLSX.writeFile(wb, `relatorio_semanal_${reportStartDate}_a_${reportEndDate}.xls`);
+        };
+
         document.getElementById('export-png-btn').addEventListener('click', () => {
             html2canvas(document.getElementById('summary-content'), { scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
@@ -463,6 +529,8 @@
             updateRankingModalUI();
             rankingModal.classList.remove('hidden');
         });
+
+        document.getElementById('weekly-report-btn').addEventListener('click', exportWeeklyReport);
 
         document.getElementById('close-ranking-btn').addEventListener('click', () => {
             rankingModal.classList.add('hidden');
@@ -591,7 +659,7 @@
                 if (error.code === 'auth/admin-restricted-operation') {
                     loadingScreen.innerHTML = `<p class="text-red-500"><b>Erro de Configuração:</b> A autenticação anónima não está ativada no seu projeto Firebase. Por favor, ative-a no Console do Firebase em Build > Authentication > Sign-in method.</p>`;
                 } else {
-                    loadingScreen.innerHTML = `<p class="text-red-500">Erro ao ligar com o servidor. Verifique se colou corretamente as chaves de configuração do Firebase.</p>`;
+                    loadingScreen.innerHTML = `<p class="text-red-500">Erro ao ligar com o servidor. Verifique se colou corretamente as chaves de configuração do Firebase.</p>`;
                 }
             }
         };
@@ -600,4 +668,3 @@
     </script>
 </body>
 </html>
-
