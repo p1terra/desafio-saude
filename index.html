@@ -109,14 +109,14 @@
 
                     <!-- Alimentação -->
                     <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h2 class="text-xl font-bold mb-4 border-b pb-2">2. Alimentação</h2>
+                        <h2 class="text-xl font-bold mb-4 border-b pb-2">2. Nutrição</h2>
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium">2.1 Refeições com frutas/vegetais:</label>
+                                <label class="block text-sm font-medium">2.1 Refeições com frutas/vegetais (5+ porções):</label>
                                 <div id="fruit-checklist" class="mt-2 grid grid-cols-2 gap-2 text-sm"></div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium">Outras metas de alimentação:</label>
+                                <label class="block text-sm font-medium">Outras metas de nutrição:</label>
                                 <div class="mt-2 space-y-2 text-sm">
                                     <div class="flex items-center"><input id="hydration" type="checkbox" class="h-4 w-4 rounded border-gray-300"><label for="hydration" class="ml-2">2.2 Bebi 2L+ de água</label></div>
                                     <div class="flex items-center"><input id="no-sweets" type="checkbox" class="h-4 w-4 rounded border-gray-300"><label for="no-sweets" class="ml-2">2.3 Sem doces/refris/fast-food</label></div>
@@ -127,11 +127,11 @@
 
                     <!-- Bem-Estar e Sono -->
                     <div class="bg-white p-6 rounded-xl shadow-md">
-                        <h2 class="text-xl font-bold mb-4 border-b pb-2">3. Bem-Estar e Sono</h2>
+                        <h2 class="text-xl font-bold mb-4 border-b pb-2">3. Bem-Estar</h2>
                         <div class="space-y-4">
                              <div class="flex items-center text-sm"><input id="sleep" type="checkbox" class="h-4 w-4 rounded border-gray-300"><label for="sleep" class="ml-2">3.1 Dormi 7h+ de sono</label></div>
                             <div>
-                                <label class="block text-sm font-medium">3.2 Atividades de bem-estar (marque as realizadas na semana):</label>
+                                <label class="block text-sm font-medium">3.2 Atividades de Cuidado Pessoal (2 pts cada):</label>
                                 <div id="selfcare-checklist" class="mt-2 grid grid-cols-2 gap-2 text-sm"></div>
                             </div>
                         </div>
@@ -192,13 +192,13 @@
                          </tr>
                      </thead>
                      <tbody>
-                         <tr class="border-b"><td class="p-2 font-semibold">Aeróbico (150 min/sem)</td><td class="p-2 text-right">até 20</td></tr>
-                         <tr class="border-b"><td class="p-2 font-semibold">Força (2x/sem)</td><td class="p-2 text-right">10</td></tr>
-                         <tr class="border-b"><td class="p-2 font-semibold">Frutas/Vegetais (5 porções/dia)</td><td class="p-2 text-right">10</td></tr>
-                         <tr class="border-b"><td class="p-2 font-semibold">Hidratação (2L/dia)</td><td class="p-2 text-right">5</td></tr>
-                         <tr class="border-b"><td class="p-2 font-semibold">Sem Doces (dia)</td><td class="p-2 text-right">2</td></tr>
-                         <tr class="border-b"><td class="p-2 font-semibold">Sono (7h+/noite)</td><td class="p-2 text-right">5</td></tr>
-                         <tr><td class="p-2 font-semibold">Cuidado Pessoal (1x/sem)</td><td class="p-2 text-right">10</td></tr>
+                         <tr class="border-b"><td class="p-2 font-semibold">Meta Aeróbica (150 min/sem)</td><td class="p-2 text-right">até 175</td></tr>
+                         <tr class="border-b"><td class="p-2 font-semibold">Meta de Força (2x/sem)</td><td class="p-2 text-right">105</td></tr>
+                         <tr class="border-b"><td class="p-2 font-semibold">5+ Frutas/Vegetais (dia)</td><td class="p-2 text-right">15</td></tr>
+                         <tr class="border-b"><td class="p-2 font-semibold">2+ L Água (dia)</td><td class="p-2 text-right">15</td></tr>
+                         <tr class="border-b"><td class="p-2 font-semibold">Sem Doces/etc (dia)</td><td class="p-2 text-right">10</td></tr>
+                         <tr class="border-b"><td class="p-2 font-semibold">7h+ Sono (noite)</td><td class="p-2 text-right">10</td></tr>
+                         <tr><td class="p-2 font-semibold">Cuidado Pessoal (dia)</td><td class="p-2 text-right">até 10</td></tr>
                      </tbody>
                  </table>
             </div>
@@ -232,7 +232,7 @@
         const participants = ['Carol', 'Iagê', 'Juliana', 'Mariana', 'Radmila'];
         const challengeStartDate = new Date('2025-08-25T00:00:00');
         const MEALS = ['Café da manhã', 'Lanche da manhã', 'Almoço', 'Lanche da tarde', 'Jantar', 'Ceia'];
-        const SELFCARE_ACTIVITIES = ['Meditação', 'Alongamento', 'Caminhada na natureza', 'Ler um livro', 'Outras'];
+        const SELFCARE_ACTIVITIES = ['Meditação ou Mindfulness', 'Alongamento ou Mobilidade', 'Contato com a Natureza', 'Leitura por Prazer', 'Autocuidado Essencial'];
         const MOTIVATIONAL_QUOTES = [
             "Cada passo conta. Continue em frente!",
             "O seu corpo de amanhã agradece o seu esforço de hoje.",
@@ -268,16 +268,30 @@
 
         // --- FUNÇÕES DE PONTUAÇÃO ---
         const getAerobicScore = (minutes) => {
-            if (minutes >= 130) return 20; if (minutes >= 100) return 14; if (minutes >= 80) return 12;
-            if (minutes >= 60) return 10; if (minutes >= 40) return 8; if (minutes >= 20) return 4;
-            if (minutes > 0) return 2; return 0;
+            if (minutes >= 130) return 175;
+            if (minutes >= 100) return 122.5;
+            if (minutes >= 80) return 105;
+            if (minutes >= 60) return 87.5;
+            if (minutes >= 40) return 70;
+            if (minutes >= 20) return 35;
+            if (minutes > 0) return 17.5;
+            return 0;
         };
         const getStrengthScore = (sessions) => {
-            if (sessions >= 2) return 10; if (sessions >= 1) return 2; return 0;
+            if (sessions >= 2) return 105;
+            if (sessions >= 1) return 21;
+            return 0;
         };
         const getFruitScore = (portions) => {
-            if (portions >= 5) return 10; if (portions >= 4) return 6; if (portions >= 3) return 3;
-            if (portions >= 2) return 2; if (portions >= 1) return 1; return 0;
+            if (portions >= 5) return 15;
+            if (portions >= 4) return 9;
+            if (portions >= 3) return 4.5;
+            if (portions >= 2) return 3;
+            if (portions >= 1) return 1.5;
+            return 0;
+        };
+        const getSelfCareScore = (activities) => {
+            return activities.length * 2;
         };
 
         // --- FUNÇÕES DE DATA ---
@@ -342,18 +356,22 @@
                 const weekKey = getChallengeWeekKey(logDate);
                 if (!weekKey) continue;
                 if (!weeklyAggregates[weekKey]) {
-                    weeklyAggregates[weekKey] = { aerobicMinutes: 0, strengthSessions: 0, selfCareDone: false, dailyPoints: 0, month: getMonthKey(logDate) };
+                    weeklyAggregates[weekKey] = { aerobicMinutes: 0, strengthSessions: 0, dailyPoints: 0, month: getMonthKey(logDate) };
                 }
                 const inputs = participantData.dailyLogs[dateKey].inputs;
                 weeklyAggregates[weekKey].aerobicMinutes += inputs.aerobicMinutes;
                 weeklyAggregates[weekKey].strengthSessions += inputs.strengthSessions;
-                if (inputs.selfCareActivities.length > 0) weeklyAggregates[weekKey].selfCareDone = true;
-                weeklyAggregates[weekKey].dailyPoints += getFruitScore(inputs.fruitPortions) + (inputs.hydration ? 5 : 0) + (inputs.noSweets ? 2 : 0) + (inputs.sleep ? 5 : 0);
+                weeklyAggregates[weekKey].dailyPoints += 
+                    getFruitScore(inputs.fruitPortions) + 
+                    (inputs.hydration ? 15 : 0) + 
+                    (inputs.noSweets ? 10 : 0) + 
+                    (inputs.sleep ? 10 : 0) +
+                    getSelfCareScore(inputs.selfCareActivities);
             }
 
             for (const weekKey in weeklyAggregates) {
                 const weekData = weeklyAggregates[weekKey];
-                const weekScore = getAerobicScore(weekData.aerobicMinutes) + getStrengthScore(weekData.strengthSessions) + (weekData.selfCareDone ? 10 : 0) + weekData.dailyPoints;
+                const weekScore = getAerobicScore(weekData.aerobicMinutes) + getStrengthScore(weekData.strengthSessions) + weekData.dailyPoints;
                 scores.total += weekScore;
                 if (weekKey === currentWeekKey) scores.weekly = weekScore;
                 if (weekData.month === currentMonthKey) scores.monthly += weekScore;
@@ -362,10 +380,10 @@
         };
 
         const updateLeaderboardUI = () => {
-            const allScores = participants.map(calculateAllScores).sort((a, b) => b.total - a.total);
+            const allScores = participants.map(p => ({...p, total: Math.round(p.total)})).map(calculateAllScores).sort((a, b) => b.total - a.total);
             leaderboardContainer.innerHTML = allScores.map((score, index) => {
                 const medal = ['🥇', '🥈', '🥉'][index] || '🔹';
-                return `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border"><div class="flex items-center"><span class="text-xl w-8">${medal}</span><span class="font-bold">${score.name}</span></div><div class="text-right"><div class="text-lg font-bold text-teal-600">${score.total} <span class="text-xs font-normal">Total</span></div></div></div>`;
+                return `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border"><div class="flex items-center"><span class="text-xl w-8">${medal}</span><span class="font-bold">${score.name}</span></div><div class="text-right"><div class="text-lg font-bold text-teal-600">${Math.round(score.total)} <span class="text-xs font-normal">Total</span></div></div></div>`;
             }).join('');
         };
         
@@ -374,7 +392,7 @@
             const rankingList = document.getElementById('ranking-modal-list');
             rankingList.innerHTML = allScores.map((score, index) => {
                 const medal = ['🥇', '🥈', '🥉'][index] || '🔹';
-                return `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border"><div class="flex items-center"><span class="text-xl w-8">${medal}</span><span class="font-bold">${score.name}</span></div><div class="text-right text-xs text-gray-600"><div>Geral: <span class="font-bold">${score.total}</span></div><div>Semana: <span class="font-bold">${score.weekly}</span></div><div>Mês: <span class="font-bold">${score.monthly}</span></div></div></div>`;
+                return `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border"><div class="flex items-center"><span class="text-xl w-8">${medal}</span><span class="font-bold">${score.name}</span></div><div class="text-right text-xs text-gray-600"><div>Geral: <span class="font-bold">${Math.round(score.total)}</span></div><div>Semana: <span class="font-bold">${Math.round(score.weekly)}</span></div><div>Mês: <span class="font-bold">${Math.round(score.monthly)}</span></div></div></div>`;
             }).join('');
         };
 
@@ -401,41 +419,41 @@
             const dailyInputs = state.allData[selectedParticipant].dailyLogs[dateKey].inputs;
 
             const dailyFruitPts = getFruitScore(dailyInputs.fruitPortions);
-            const dailyHydrationPts = dailyInputs.hydration ? 5 : 0;
-            const dailyNoSweetsPts = dailyInputs.noSweets ? 2 : 0;
-            const dailySleepPts = dailyInputs.sleep ? 5 : 0;
-            const dailyTotal = dailyFruitPts + dailyHydrationPts + dailyNoSweetsPts + dailySleepPts;
+            const dailyHydrationPts = dailyInputs.hydration ? 15 : 0;
+            const dailyNoSweetsPts = dailyInputs.noSweets ? 10 : 0;
+            const dailySleepPts = dailyInputs.sleep ? 10 : 0;
+            const dailySelfCarePts = getSelfCareScore(dailyInputs.selfCareActivities);
+            const dailyTotal = dailyFruitPts + dailyHydrationPts + dailyNoSweetsPts + dailySleepPts + dailySelfCarePts;
 
-            let weekAerobicMinutes = 0, weekStrengthSessions = 0, weekSelfCareDone = false;
+            let weekAerobicMinutes = 0, weekStrengthSessions = 0;
             for (const dKey in state.allData[selectedParticipant].dailyLogs) {
                 if (getChallengeWeekKey(new Date(dKey + 'T12:00:00')) === weekKey) {
                     const log = state.allData[selectedParticipant].dailyLogs[dKey].inputs;
                     weekAerobicMinutes += log.aerobicMinutes;
                     weekStrengthSessions += log.strengthSessions;
-                    if (log.selfCareActivities.length > 0) weekSelfCareDone = true;
                 }
             }
 
             document.getElementById('summary-name').textContent = selectedParticipant;
             document.getElementById('summary-date').textContent = selectedDate.toLocaleDateString('pt-BR');
-            document.getElementById('summary-daily-total').textContent = dailyTotal;
-            document.getElementById('summary-weekly-total').textContent = allScores.weekly;
-            document.getElementById('summary-monthly-total').textContent = allScores.monthly;
-            document.getElementById('summary-general-total').textContent = allScores.total;
+            document.getElementById('summary-daily-total').textContent = Math.round(dailyTotal);
+            document.getElementById('summary-weekly-total').textContent = Math.round(allScores.weekly);
+            document.getElementById('summary-monthly-total').textContent = Math.round(allScores.monthly);
+            document.getElementById('summary-general-total').textContent = Math.round(allScores.total);
 
             document.getElementById('summary-details').innerHTML = `
-                <h3 class="font-bold mb-2 text-gray-700">Pontos do dia (${dailyTotal} pts):</h3>
-                ${createProgressBar('Frutas/Vegetais', dailyFruitPts, 10, 'green')}
-                ${createProgressBar('Hidratação', dailyHydrationPts, 5, 'sky')}
-                ${createProgressBar('Sem Doces', dailyNoSweetsPts, 2, 'red')}
-                ${createProgressBar('Sono', dailySleepPts, 5, 'indigo')}
+                <h3 class="font-bold mb-2 text-gray-700">Pontos do dia (${Math.round(dailyTotal)} pts):</h3>
+                ${createProgressBar('Frutas/Vegetais', dailyFruitPts, 15, 'green')}
+                ${createProgressBar('Hidratação', dailyHydrationPts, 15, 'sky')}
+                ${createProgressBar('Sem Doces', dailyNoSweetsPts, 10, 'red')}
+                ${createProgressBar('Sono', dailySleepPts, 10, 'indigo')}
+                ${createProgressBar('Cuidado Pessoal', dailySelfCarePts, 10, 'pink')}
             `;
             
             document.getElementById('summary-progress').innerHTML = `
                 <h3 class="font-bold mb-2 text-gray-700">Progresso na Semana:</h3>
                 ${createProgressBar('Aeróbico (min)', Math.min(weekAerobicMinutes, 150), 150, 'orange')}
                 ${createProgressBar('Força (sessões)', Math.min(weekStrengthSessions, 2), 2, 'rose')}
-                ${createProgressBar('Bem-estar', weekSelfCareDone ? 1 : 0, 1, 'teal')}
             `;
 
             summaryModal.classList.remove('hidden');
@@ -465,7 +483,7 @@
                 ["Relatório Semanal do Desafio da Saúde"],
                 [`Período: ${lastMonday.toLocaleDateString('pt-BR')} a ${lastSunday.toLocaleDateString('pt-BR')}`],
                 [],
-                ["Participante", "Data", "Min Aeróbico", "Sessões Força", "Porções Frutas", "Hidratação", "Sem Doces", "Sono"]
+                ["Participante", "Data", "Min Aeróbico", "Sessões Força", "Porções Frutas", "Hidratação", "Sem Doces", "Sono", "Cuidado Pessoal"]
             ];
 
             participants.forEach(participant => {
@@ -485,7 +503,8 @@
                             inputs.fruitPortions,
                             inputs.hydration ? 'Sim' : 'Não',
                             inputs.noSweets ? 'Sim' : 'Não',
-                            inputs.sleep ? 'Sim' : 'Não'
+                            inputs.sleep ? 'Sim' : 'Não',
+                            inputs.selfCareActivities.join(', ')
                         ]);
                     }
                 }
@@ -518,7 +537,13 @@
             const { selectedParticipant, selectedDate } = state;
             const allScores = calculateAllScores(selectedParticipant);
             const dailyInputs = state.allData[selectedParticipant].dailyLogs[getFormattedDateKey(selectedDate)].inputs;
-            const dailyTotal = getFruitScore(dailyInputs.fruitPortions) + (dailyInputs.hydration ? 5 : 0) + (dailyInputs.noSweets ? 2 : 0) + (dailyInputs.sleep ? 5 : 0);
+            
+            const dailyFruitPts = getFruitScore(dailyInputs.fruitPortions);
+            const dailyHydrationPts = dailyInputs.hydration ? 15 : 0;
+            const dailyNoSweetsPts = dailyInputs.noSweets ? 10 : 0;
+            const dailySleepPts = dailyInputs.sleep ? 10 : 0;
+            const dailySelfCarePts = getSelfCareScore(dailyInputs.selfCareActivities);
+            const dailyTotal = dailyFruitPts + dailyHydrationPts + dailyNoSweetsPts + dailySleepPts + dailySelfCarePts;
 
             const data = [
                 ["Desafio da Saúde - Resumo Detalhado"],
@@ -527,16 +552,17 @@
                 ["Categoria", "Valor", "Pontos"],
                 ["Minutos Aeróbicos (dia)", dailyInputs.aerobicMinutes, "-"],
                 ["Sessões de Força (dia)", dailyInputs.strengthSessions, "-"],
-                ["Porções Frutas/Vegetais", dailyInputs.fruitPortions, getFruitScore(dailyInputs.fruitPortions)],
-                ["Hidratação (2L+)", dailyInputs.hydration ? "Sim" : "Não", dailyInputs.hydration ? 5 : 0],
-                ["Sem Doces/etc", dailyInputs.noSweets ? "Sim" : "Não", dailyInputs.noSweets ? 2 : 0],
-                ["Sono (7h+)", dailyInputs.sleep ? "Sim" : "Não", dailyInputs.sleep ? 5 : 0],
+                ["Porções Frutas/Vegetais", dailyInputs.fruitPortions, dailyFruitPts],
+                ["Hidratação (2L+)", dailyInputs.hydration ? "Sim" : "Não", dailyHydrationPts],
+                ["Sem Doces/etc", dailyInputs.noSweets ? "Sim" : "Não", dailyNoSweetsPts],
+                ["Sono (7h+)", dailyInputs.sleep ? "Sim" : "Não", dailySleepPts],
+                ["Cuidado Pessoal", dailyInputs.selfCareActivities.join(', '), dailySelfCarePts],
                 [],
                 ["Resumo de Pontos"],
-                ["Pontuação do Dia", dailyTotal],
-                ["Pontuação da Semana", allScores.weekly],
-                ["Pontuação do Mês", allScores.monthly],
-                ["Pontuação Geral", allScores.total],
+                ["Pontuação do Dia", Math.round(dailyTotal)],
+                ["Pontuação da Semana", Math.round(allScores.weekly)],
+                ["Pontuação do Mês", Math.round(allScores.monthly)],
+                ["Pontuação Geral", Math.round(allScores.total)],
             ];
             const ws = XLSX.utils.aoa_to_sheet(data);
             const wb = XLSX.utils.book_new();
