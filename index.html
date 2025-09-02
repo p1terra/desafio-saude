@@ -148,8 +148,8 @@
         </div>
 
         <!-- TELA DE RESUMO (MODAL) -->
-        <div id="summary-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div id="summary-card-frame" class="p-1 bg-gradient-to-br from-teal-400 via-green-400 to-emerald-500 rounded-2xl shadow-2xl w-full max-w-lg">
+        <div id="summary-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 p-4 z-50 overflow-y-auto">
+            <div id="summary-card-frame" class="p-1 bg-gradient-to-br from-teal-400 via-green-400 to-emerald-500 rounded-2xl shadow-2xl w-full max-w-lg mx-auto my-8">
                 <div class="bg-white rounded-xl">
                     <div id="summary-content" class="p-6 subtle-bg">
                         <h2 class="text-2xl font-bold text-center text-teal-600 mb-2">Resumo do Check-in</h2>
@@ -180,7 +180,7 @@
         </div>
         
         <!-- TELA FINAL -->
-        <div id="thank-you-screen" class="hidden fixed inset-0 text-center flex flex-col items-center justify-center bg-cover bg-center z-40 p-4">
+        <div id="thank-you-screen" class="hidden fixed inset-0 text-center flex flex-col items-center justify-start bg-cover bg-center z-40 p-4 pt-8 pb-8 overflow-y-auto">
              <div id="motivational-card" class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 w-full max-w-md mx-auto mb-6">
                  <p id="motivational-quote" class="text-center text-lg italic text-gray-700 mb-4"></p>
                  <h3 class="font-bold text-center text-teal-600 mb-2 border-t pt-4">Tabela de Pontos</h3>
@@ -228,8 +228,8 @@
         </div>
 
         <!-- TELA DE RANKING (MODAL) -->
-        <div id="ranking-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg">
+        <div id="ranking-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 p-4 z-50 overflow-y-auto">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-auto my-8">
                 <div class="p-6">
                     <h2 class="text-2xl font-bold text-center text-teal-600 mb-4">Ranking Detalhado</h2>
                     <div id="ranking-modal-list" class="space-y-3"></div>
