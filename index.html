@@ -813,17 +813,36 @@
                 await signInAnonymously(auth);
 
                 const collectionRef = collection(state.db, `artifacts/${state.appId}/public/data/healthChallenge`);
-                onSnapshot(collectionRef, (snapshot) => {
-                    snapshot.docs.forEach(doc => {
-                        state.allData[doc.id] = doc.data();
+                
+                const initialDataPromise = new Promise((resolve, reject) => {
+                    let firstLoad = true;
+                    onSnapshot(collectionRef, (snapshot) => {
+                        snapshot.docs.forEach(doc => {
+                            state.allData[doc.id] = doc.data();
+                        });
+                        
+                        if (!firstLoad) {
+                            if (document.getElementById('main-app').classList.contains('hidden') === false) {
+                               updateLeaderboardUI();
+                            }
+                            if (rankingModal.classList.contains('hidden') === false) {
+                                updateRankingModalUI();
+                            }
+                        }
+
+                        if (firstLoad) {
+                            firstLoad = false;
+                            resolve();
+                        }
+
+                    }, (error) => {
+                        console.error("Erro no listener do Snapshot:", error);
+                        showMessage("Erro ao carregar dados em tempo real.", "error");
+                        reject(error);
                     });
-                    if (document.getElementById('main-app').classList.contains('hidden') === false) {
-                       updateLeaderboardUI();
-                    }
-                }, (error) => {
-                    console.error("Erro no listener do Snapshot:", error);
-                    showMessage("Erro ao carregar dados em tempo real.", "error");
                 });
+
+                await initialDataPromise;
 
                 setupParticipant.innerHTML = '<option value="">-- Selecione --</option>' + participants.map(p => `<option value="${p}">${p}</option>`).join('');
                 populateChecklists();
