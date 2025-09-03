@@ -52,7 +52,8 @@
 
         <!-- TELA DE CONFIGURAÇÃO INICIAL -->
         <div id="setup-screen" class="hidden">
-            <header class="text-center mb-6">
+            <header class="text-center mb-6 max-w-md mx-auto">
+                 <img src="imagens/logo_1.png" alt="logo" class="mx-auto w-full max-w-xs rounded-lg mb-4">
                 <h1 class="text-3xl sm:text-4xl font-bold text-teal-600">Desafio da Saúde</h1>
                 <p class="text-gray-500 mt-1">Selecione a data e o participante para começar.</p>
             </header>
@@ -72,11 +73,14 @@
                 </div>
                 <button id="confirm-setup-btn" disabled class="w-full bg-teal-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-teal-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200">Confirmar e Continuar</button>
             </div>
-            <div class="max-w-md mx-auto text-center">
-                <img src="imagens/logo_1.png" alt="logo" class="mx-auto w-full max-w-md rounded-lg mt-6">
-                 <div class="flex gap-4 mt-4">
+            <div class="max-w-md mx-auto text-center mt-6 space-y-2">
+                 <div class="flex gap-2">
+                    <button id="score-table-btn" class="flex-1 bg-gray-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200">Tabela de Pontos</button>
                     <button id="ranking-btn" class="flex-1 bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200">Ver Ranking</button>
-                    <button id="weekly-report-btn" class="flex-1 bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200">Relatório Semanal</button>
+                </div>
+                <div class="flex gap-2">
+                    <button id="weekly-report-btn" class="flex-1 bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200">Relatório da última semana</button>
+                    <button id="full-report-btn" class="flex-1 bg-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200">Relatório até aqui</button>
                 </div>
             </div>
         </div>
@@ -239,6 +243,19 @@
                 </div>
             </div>
         </div>
+        
+        <!-- TELA DE TABELA DE PONTOS (MODAL) -->
+        <div id="score-table-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 p-4 z-50 overflow-y-auto">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-auto my-8">
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold text-center text-teal-600 mb-4">Tabela de Pontos</h2>
+                    <div id="score-table-content"></div>
+                </div>
+                <div class="p-4 bg-gray-100 rounded-b-xl text-center">
+                    <button id="close-score-table-btn" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600">Fechar</button>
+                </div>
+            </div>
+        </div>
 
     </div>
 
@@ -275,6 +292,7 @@
         const mainApp = document.getElementById('main-app');
         const thankYouScreen = document.getElementById('thank-you-screen');
         const rankingModal = document.getElementById('ranking-modal');
+        const scoreTableModal = document.getElementById('score-table-modal');
         const setupDate = document.getElementById('setup-date');
         const setupParticipant = document.getElementById('setup-participant');
         const confirmDetails = document.getElementById('confirmation-details');
@@ -360,6 +378,12 @@
                 const cb = document.getElementById(`selfcare-${activity.replace(/\s/g, '')}`);
                 if (cb) cb.checked = true;
             });
+        };
+
+        const populateScoreTableModal = () => {
+            const scoreTableContainer = document.getElementById('score-table-content');
+            const scoreTableHTML = document.querySelector('#motivational-card table').outerHTML;
+            scoreTableContainer.innerHTML = scoreTableHTML;
         };
 
         // --- LÓGICA DE CÁLCULO GERAL ---
@@ -543,6 +567,66 @@
             XLSX.utils.book_append_sheet(wb, ws, "Relatório Semanal");
             XLSX.writeFile(wb, `relatorio_semanal_${reportStartDate}_a_${reportEndDate}.xls`);
         };
+        
+        const exportFullReport = () => {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
+
+            if (yesterday < challengeStartDate) {
+                alert("Ainda não há dados para exportar.");
+                return;
+            }
+
+            const reportStartDate = getFormattedDateKey(challengeStartDate);
+            const reportEndDate = getFormattedDateKey(yesterday);
+
+            const dataForSheet = [
+                ["Relatório Completo do Desafio da Saúde"],
+                [`Período: ${challengeStartDate.toLocaleDateString('pt-BR')} a ${yesterday.toLocaleDateString('pt-BR')}`],
+                [],
+                ["Participante", "Data", "Min Aeróbico", "Sessões Força", "Porções Frutas", "Hidratação", "Sem Doces", "Sono", "Cuidado Pessoal"]
+            ];
+
+            participants.forEach(participant => {
+                const participantData = state.allData[participant] || { dailyLogs: {} };
+                let hasData = false;
+                const sortedDateKeys = Object.keys(participantData.dailyLogs).sort();
+
+                for (const dateKey of sortedDateKeys) {
+                    if (dateKey <= reportEndDate) { 
+                        hasData = true;
+                        const inputs = participantData.dailyLogs[dateKey].inputs;
+                        dataForSheet.push([
+                            participant,
+                            new Date(dateKey + 'T12:00:00').toLocaleDateString('pt-BR'),
+                            inputs.aerobicMinutes,
+                            inputs.strengthSessions,
+                            inputs.fruitPortions,
+                            inputs.hydration ? 'Sim' : 'Não',
+                            inputs.noSweets ? 'Sim' : 'Não',
+                            inputs.sleep ? 'Sim' : 'Não',
+                            inputs.selfCareActivities.join(', ')
+                        ]);
+                    }
+                }
+                if (hasData) {
+                    dataForSheet.push([]); 
+                }
+            });
+
+            if (dataForSheet.length <= 4) {
+                alert("Nenhum dado encontrado para o período.");
+                return;
+            }
+
+            const ws = XLSX.utils.aoa_to_sheet(dataForSheet);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Relatório Completo");
+            XLSX.writeFile(wb, `relatorio_completo_ate_${reportEndDate}.xls`);
+        };
 
         document.getElementById('export-png-btn').addEventListener('click', () => {
             html2canvas(document.getElementById('summary-content'), { scale: 2 }).then(canvas => {
@@ -612,10 +696,21 @@
         });
 
         document.getElementById('weekly-report-btn').addEventListener('click', exportWeeklyReport);
+        
+        document.getElementById('full-report-btn').addEventListener('click', exportFullReport);
+
+        document.getElementById('score-table-btn').addEventListener('click', () => {
+            scoreTableModal.classList.remove('hidden');
+        });
 
         document.getElementById('close-ranking-btn').addEventListener('click', () => {
             rankingModal.classList.add('hidden');
         });
+
+        document.getElementById('close-score-table-btn').addEventListener('click', () => {
+            scoreTableModal.classList.add('hidden');
+        });
+
 
         // --- LÓGICA DE SETUP E EVENTOS ---
         const checkSetupValidity = () => {
@@ -732,6 +827,7 @@
 
                 setupParticipant.innerHTML = '<option value="">-- Selecione --</option>' + participants.map(p => `<option value="${p}">${p}</option>`).join('');
                 populateChecklists();
+                populateScoreTableModal();
                 loadingScreen.classList.add('hidden');
                 setupScreen.classList.remove('hidden');
 
