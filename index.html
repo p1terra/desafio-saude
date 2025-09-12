@@ -54,6 +54,7 @@
         <div id="setup-screen" class="hidden">
             <header class="text-center mb-6 max-w-md mx-auto">
                  <img src="imagens/logo_1.png" alt="logo" class="mx-auto w-full max-w-xs rounded-lg mb-4">
+                <h1 class="text-3xl sm:text-4xl font-bold text-teal-600">Desafio da Saúde</h1>
                 <p class="text-gray-500 mt-1">Selecione a data e o participante para começar.</p>
             </header>
             <div class="bg-white p-6 rounded-xl shadow-md max-w-md mx-auto space-y-4">
@@ -75,11 +76,14 @@
             <div class="max-w-md mx-auto text-center mt-6 space-y-2">
                  <div class="flex gap-2">
                     <button id="score-table-btn" class="flex-1 bg-gray-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200">Tabela de Pontos</button>
-                    <button id="ranking-btn" class="flex-1 bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200">Ver Ranking</button>
+                    <button id="ranking-btn" class="flex-1 bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200">Ranking Geral</button>
                 </div>
                 <div class="flex gap-2">
-                    <button id="weekly-report-btn" class="flex-1 bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200">Relatório da última semana</button>
-                    <button id="full-report-btn" class="flex-1 bg-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200">Relatório até aqui</button>
+                    <button id="weekly-winners-btn" class="w-full bg-amber-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-amber-600 transition-colors duration-200">Ganhadores da Semana</button>
+                </div>
+                <div class="flex gap-2">
+                    <button id="weekly-report-btn" class="flex-1 bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200">Pontuação da última semana</button>
+                    <button id="full-report-btn" class="flex-1 bg-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-purple-700 transition-colors duration-200">Relatório da Pontuação Geral</button>
                 </div>
             </div>
         </div>
@@ -256,6 +260,19 @@
             </div>
         </div>
 
+        <!-- TELA DE GANHADORES DA SEMANA (MODAL) -->
+        <div id="weekly-winners-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 p-4 z-50 overflow-y-auto">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-auto my-8">
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold text-center text-teal-600 mb-4">Ganhadores da Semana</h2>
+                    <div id="weekly-winners-list" class="space-y-4"></div>
+                </div>
+                <div class="p-4 bg-gray-100 rounded-b-xl text-center">
+                    <button id="close-weekly-winners-btn" class="bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600">Fechar</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
@@ -292,6 +309,7 @@
         const thankYouScreen = document.getElementById('thank-you-screen');
         const rankingModal = document.getElementById('ranking-modal');
         const scoreTableModal = document.getElementById('score-table-modal');
+        const weeklyWinnersModal = document.getElementById('weekly-winners-modal');
         const setupDate = document.getElementById('setup-date');
         const setupParticipant = document.getElementById('setup-participant');
         const confirmDetails = document.getElementById('confirmation-details');
@@ -438,6 +456,95 @@
                 return `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border"><div class="flex items-center"><span class="text-xl w-8">${medal}</span><span class="font-bold">${score.name}</span></div><div class="text-right text-xs text-gray-600"><div>Geral: <span class="font-bold">${Math.round(score.total)}</span></div><div>Semana: <span class="font-bold">${Math.round(score.weekly)}</span></div><div>Mês: <span class="font-bold">${Math.round(score.monthly)}</span></div></div></div>`;
             }).join('');
         };
+        
+        const calculateWeeklyWinners = () => {
+            const allWeeklyData = {};
+
+            for (const participantName of participants) {
+                const participantData = state.allData[participantName] || { dailyLogs: {} };
+                for (const dateKey in participantData.dailyLogs) {
+                    const logDate = new Date(dateKey + 'T12:00:00');
+                    const weekKey = getChallengeWeekKey(logDate);
+                    if (!weekKey) continue;
+
+                    if (!allWeeklyData[weekKey]) {
+                        allWeeklyData[weekKey] = {};
+                    }
+                    if (!allWeeklyData[weekKey][participantName]) {
+                        allWeeklyData[weekKey][participantName] = { aerobicMinutes: 0, strengthSessions: 0, dailyPoints: 0 };
+                    }
+
+                    const inputs = participantData.dailyLogs[dateKey].inputs;
+                    allWeeklyData[weekKey][participantName].aerobicMinutes += inputs.aerobicMinutes;
+                    allWeeklyData[weekKey][participantName].strengthSessions += inputs.strengthSessions;
+                    allWeeklyData[weekKey][participantName].dailyPoints += 
+                        getFruitScore(inputs.fruitPortions) + 
+                        (inputs.hydration ? 15 : 0) + 
+                        (inputs.noSweets ? 10 : 0) + 
+                        (inputs.sleep ? 10 : 0) +
+                        getSelfCareScore(inputs.selfCareActivities);
+                }
+            }
+
+            const weeklyResults = [];
+            const currentWeekKey = getChallengeWeekKey(new Date());
+
+            for (const weekKey in allWeeklyData) {
+                if (weekKey === currentWeekKey) continue; 
+
+                const weekData = allWeeklyData[weekKey];
+                const scoresForThisWeek = [];
+
+                for (const participantName in weekData) {
+                    const pData = weekData[participantName];
+                    const weeklyScore = getAerobicScore(pData.aerobicMinutes) + getStrengthScore(pData.strengthSessions) + pData.dailyPoints;
+                    scoresForThisWeek.push({ name: participantName, score: weeklyScore });
+                }
+
+                scoresForThisWeek.sort((a, b) => b.score - a.score);
+
+                const weekNumber = parseInt(weekKey.replace('challenge-week-', ''), 10);
+                const weekStartDate = new Date(challengeStartDate);
+                weekStartDate.setDate(challengeStartDate.getDate() + (weekNumber * 7));
+                const weekEndDate = new Date(weekStartDate);
+                weekEndDate.setDate(weekStartDate.getDate() + 6);
+
+                weeklyResults.push({
+                    weekNumber: weekNumber + 1,
+                    period: `${weekStartDate.toLocaleDateString('pt-BR')} - ${weekEndDate.toLocaleDateString('pt-BR')}`,
+                    scores: scoresForThisWeek
+                });
+            }
+
+            weeklyResults.sort((a, b) => b.weekNumber - a.weekNumber);
+            return weeklyResults;
+        };
+
+        const updateWeeklyWinnersUI = () => {
+            const weeklyWinnersData = calculateWeeklyWinners();
+            const listContainer = document.getElementById('weekly-winners-list');
+
+            if (weeklyWinnersData.length === 0) {
+                listContainer.innerHTML = '<p class="text-center text-gray-500">Ainda não há resultados de semanas completas.</p>';
+                return;
+            }
+
+            listContainer.innerHTML = weeklyWinnersData.map(weekResult => {
+                const scoresHtml = weekResult.scores.map((score, index) => {
+                    const medal = ['🥇', '🥈', '🥉'][index] || `${index + 1}.`;
+                    return `<div class="flex items-center justify-between text-sm py-1"><div class="flex items-center"><span class="w-6">${medal}</span><span>${score.name}</span></div><span class="font-semibold">${Math.round(score.score)} pts</span></div>`;
+                }).join('');
+
+                return `
+                    <div class="bg-gray-50 p-3 rounded-lg border">
+                        <h4 class="font-bold text-md text-teal-700">Semana ${weekResult.weekNumber}</h4>
+                        <p class="text-xs text-gray-500 mb-2">${weekResult.period}</p>
+                        <div class="space-y-1">${scoresHtml}</div>
+                    </div>
+                `;
+            }).join('');
+        };
+
 
         // --- LÓGICA DO RESUMO ---
         const createProgressBar = (label, value, max, color) => {
@@ -702,12 +809,21 @@
             scoreTableModal.classList.remove('hidden');
         });
 
+        document.getElementById('weekly-winners-btn').addEventListener('click', () => {
+            updateWeeklyWinnersUI();
+            weeklyWinnersModal.classList.remove('hidden');
+        });
+
         document.getElementById('close-ranking-btn').addEventListener('click', () => {
             rankingModal.classList.add('hidden');
         });
 
         document.getElementById('close-score-table-btn').addEventListener('click', () => {
             scoreTableModal.classList.add('hidden');
+        });
+
+        document.getElementById('close-weekly-winners-btn').addEventListener('click', () => {
+            weeklyWinnersModal.classList.add('hidden');
         });
 
 
@@ -863,6 +979,4 @@
     </script>
 </body>
 </html>
-
-
 
