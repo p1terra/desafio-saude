@@ -125,7 +125,7 @@
                                 <label class="block text-sm font-medium">Outras metas de nutrição:</label>
                                 <div class="mt-2 space-y-2 text-sm">
                                     <div class="flex items-center"><input id="hydration" type="checkbox" class="h-4 w-4 rounded border-gray-300"><label for="hydration" class="ml-2">2.2 Bebi 2L+ de água</label></div>
-                                    <div class="flex items-center"><input id="no-sweets" type="checkbox" class="h-4 w-4 rounded border-gray-300"><label for="no-sweets" class="ml-2">2.3 Sem doces/refris/bebidas alcólicas/fast-food</label></div>
+                                    <div class="flex items-center"><input id="no-sweets" type="checkbox" class="h-4 w-4 rounded border-gray-300"><label for="no-sweets" class="ml-2">2.3 Sem doces/refris/fast-food</label></div>
                                 </div>
                             </div>
                         </div>
@@ -474,7 +474,7 @@
             }).join('');
         };
         
-        const calculateWeeklyScores = () => {
+        const calculateWeeklyScores = (includeCurrentWeek = false) => {
             const allWeeklyData = {};
 
             for (const participantName of participants) {
@@ -507,15 +507,15 @@
             const currentWeekKey = getChallengeWeekKey(new Date());
 
             for (const weekKey in allWeeklyData) {
-                if (weekKey === currentWeekKey) continue; 
+                if (!includeCurrentWeek && weekKey === currentWeekKey) continue;
 
                 const weekData = allWeeklyData[weekKey];
                 const scoresForThisWeek = [];
 
-                for (const participantName in weekData) {
-                    const pData = weekData[participantName];
+                for (const participant of participants) {
+                    const pData = weekData[participant] || { aerobicMinutes: 0, strengthSessions: 0, dailyPoints: 0 };
                     const weeklyScore = getAerobicScore(pData.aerobicMinutes) + getStrengthScore(pData.strengthSessions) + pData.dailyPoints;
-                    scoresForThisWeek.push({ name: participantName, score: weeklyScore });
+                    scoresForThisWeek.push({ name: participant, score: weeklyScore });
                 }
 
                 scoresForThisWeek.sort((a, b) => b.score - a.score);
@@ -529,7 +529,8 @@
                 weeklyResults.push({
                     weekNumber: weekNumber + 1,
                     period: `${weekStartDate.toLocaleDateString('pt-BR')} - ${weekEndDate.toLocaleDateString('pt-BR')}`,
-                    scores: scoresForThisWeek
+                    scores: scoresForThisWeek,
+                    isCurrent: weekKey === currentWeekKey
                 });
             }
 
@@ -538,11 +539,11 @@
         };
 
         const updateWeeklyRankingUI = () => {
-            const weeklyScoresData = calculateWeeklyScores();
+            const weeklyScoresData = calculateWeeklyScores(true);
             const listContainer = document.getElementById('weekly-ranking-list');
 
             if (weeklyScoresData.length === 0) {
-                listContainer.innerHTML = '<p class="text-center text-gray-500">Ainda não há resultados de semanas completas.</p>';
+                listContainer.innerHTML = '<p class="text-center text-gray-500">Nenhum dado de check-in foi registrado ainda.</p>';
                 return;
             }
 
@@ -552,9 +553,13 @@
                     return `<div class="flex items-center justify-between text-sm py-1"><div class="flex items-center"><span class="w-6">${medal}</span><span>${score.name}</span></div><span class="font-semibold">${Math.round(score.score)} pts</span></div>`;
                 }).join('');
 
+                const title = weekResult.isCurrent 
+                    ? `Semana Atual - Pontuação Parcial` 
+                    : `Semana ${weekResult.weekNumber}`;
+
                 return `
                     <div class="bg-gray-50 p-3 rounded-lg border">
-                        <h4 class="font-bold text-md text-teal-700">Semana ${weekResult.weekNumber}</h4>
+                        <h4 class="font-bold text-md text-teal-700">${title}</h4>
                         <p class="text-xs text-gray-500 mb-2">${weekResult.period}</p>
                         <div class="space-y-1">${scoresHtml}</div>
                     </div>
@@ -563,7 +568,7 @@
         };
         
         const updateWeeklyChampionsUI = () => {
-            const weeklyScoresData = calculateWeeklyScores();
+            const weeklyScoresData = calculateWeeklyScores(false);
             const summaryContainer = document.getElementById('weekly-champions-summary');
             const listContainer = document.getElementById('weekly-champions-list');
             
@@ -573,17 +578,19 @@
             for (const weekResult of weeklyScoresData) {
                 if (weekResult.scores.length > 0) {
                     const topScore = weekResult.scores[0].score;
-                    const winners = weekResult.scores.filter(s => s.score === topScore).map(s => s.name);
-                    
-                    winners.forEach(winner => {
-                        winCounts[winner]++;
-                    });
+                    if (topScore > 0) {
+                        const winners = weekResult.scores.filter(s => s.score === topScore).map(s => s.name);
+                        
+                        winners.forEach(winner => {
+                            winCounts[winner]++;
+                        });
 
-                    weeklyWinners.push({
-                        weekNumber: weekResult.weekNumber,
-                        period: weekResult.period,
-                        winners: winners.join(', ')
-                    });
+                        weeklyWinners.push({
+                            weekNumber: weekResult.weekNumber,
+                            period: weekResult.period,
+                            winners: winners.join(', ')
+                        });
+                    }
                 }
             }
 
