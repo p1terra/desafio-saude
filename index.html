@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desafio da Saúde 2.0 - Fim de Ano</title>
+    <title>🎅🎄✨🦌Desafio da Saúde 2.0 - Fim de Ano🎅🎄✨🦌</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -52,7 +52,7 @@
             <header class="text-center mb-6 max-w-md mx-auto">
                  <img src="imagens/logo_1.png" alt="logo" class="mx-auto w-full max-w-xs rounded-lg mb-4">
                 <h1 class="text-3xl sm:text-4xl font-bold text-teal-600">Desafio da Saúde 2.0</h1>
-                <p class="text-gray-500 mt-1">Edição Fim de Ano (28/11 a 21/12)</p>
+                <p class="text-gray-500 mt-1">Edição Fim de Ano (01/12 a 21/12)</p>
             </header>
             <div class="bg-white p-6 rounded-xl shadow-md max-w-md mx-auto space-y-4">
                 <div>
@@ -311,16 +311,21 @@
         const participants = ['Carol', 'Iagê', 'Juliana', 'Mariana', 'Radmila'];
         
         // --- DATA DE INÍCIO E FIM ATUALIZADAS ---
-        const challengeStartDate = new Date('2025-11-28T00:00:00');
+        const challengeStartDate = new Date('2025-12-01T00:00:00');
         const challengeEndDate = new Date('2025-12-21T23:59:59');
 
         const SELFCARE_ACTIVITIES = ['Meditação ou Mindfulness', 'Alongamento ou Mobilidade', 'Contato com a Natureza', 'Leitura por Prazer', 'Autocuidado Essencial'];
         const MOTIVATIONAL_QUOTES = [
-            "Cada passo conta. Continue em frente!",
-            "O seu corpo de amanhã agradece o seu esforço de hoje.",
-            "Pequenas escolhas, grandes resultados. Um dia de cada vez.",
-            "Consistência é a chave para o sucesso. Não desista!",
-            "Cuide do seu corpo. É o único lugar que você tem para viver."
+            "🎅Ho ho ho! O melhor presente que você pode se dar é a sua saúde. Continue firme! 🎅",
+            "🎄Estou de olho na sua lista de metas! Quem se esforça ganha mais disposição! 🎄",
+            "✨Acredite na magia do seu esforço. Os resultados vêm para quem não desiste! ✨",
+            "🦌Um passo de cada vez, com a força das minhas renas. Você consegue! 🦌",
+            "🎁O Natal está chegando, mas o foco não tira férias. Vamos suar essa camisa! 🎁"
+            "⏰Não espere o Ano Novo para ser sua melhor versão. A hora é agora! ⏰"
+            "🍎Troque os cookies por frutas e sinta a energia do Polo Norte no seu corpo! 🍎"
+            "🏠Seu corpo é sua chaminé: mantenha-o limpo e forte para aguentar o ano todo! 🏠"
+            "💪Disciplina é fazer o que precisa ser feito, mesmo quando a ceia parece irresistível. Foco! 💪"
+            "🔔O Papai Noel se orgulha de quem cuida de si mesmo. Parabéns pela dedicação! 🔔"
         ];
 
         let state = {
@@ -779,7 +784,7 @@
                 const selectedDate = new Date(dateVal + 'T12:00:00');
                 if (selectedDate < challengeStartDate) {
                     confirmBtn.disabled = true;
-                    showMessage('A data não pode ser anterior ao início do desafio (28/11/2025).', 'error');
+                    showMessage('A data não pode ser anterior ao início do desafio (01/12/2025).', 'error');
                     confirmDetails.classList.add('hidden'); return;
                 }
                 if (selectedDate > challengeEndDate) {
