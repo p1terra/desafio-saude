@@ -200,7 +200,7 @@
                          </thead>
                          <tbody>
                             <tr class="bg-gray-200"><td class="p-2 font-semibold" colspan="2">Meta Aeróbica (Semanal)</td></tr>
-                            <tr class="border-b"><td class="p-2 pl-6 text-xs">150+ min</td><td class="p-2 text-right">175 pts</td></tr>
+                            <tr class="border-b"><td class="p-2 pl-6 text-xs">130+ min</td><td class="p-2 text-right">175 pts</td></tr>
                             <tr class="border-b"><td class="p-2 pl-6 text-xs">100 a 129 min</td><td class="p-2 text-right">122.5 pts</td></tr>
                             <tr class="border-b"><td class="p-2 pl-6 text-xs">80 a 99 min</td><td class="p-2 text-right">105 pts</td></tr>
                             <tr class="border-b"><td class="p-2 pl-6 text-xs">60 a 79 min</td><td class="p-2 text-right">87.5 pts</td></tr>
@@ -340,7 +340,7 @@
 
         // --- FUNÇÕES DE PONTUAÇÃO ---
         const getAerobicScore = (minutes) => {
-            if (minutes >= 150) return 175;
+            if (minutes >= 130) return 175;
             if (minutes >= 100) return 122.5;
             if (minutes >= 80) return 105;
             if (minutes >= 60) return 87.5;
@@ -682,7 +682,7 @@
             
             document.getElementById('summary-progress').innerHTML = `
                 <h3 class="font-bold mb-2 text-gray-700">Progresso na Semana:</h3>
-                ${createProgressBar('Aeróbico (min)', Math.min(weekAerobicMinutes, 150), 150, 'orange')}
+                ${createProgressBar('Aeróbico (min)', Math.min(weekAerobicMinutes, 130), 130, 'orange')}
                 ${createProgressBar('Força (sessões)', Math.min(weekStrengthSessions, 2), 2, 'rose')}
             `;
 
@@ -1068,5 +1068,3 @@
     </script>
 </body>
 </html>
-
-
