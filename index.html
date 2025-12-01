@@ -340,7 +340,7 @@
 
         // --- FUNÇÕES DE PONTUAÇÃO ---
         const getAerobicScore = (minutes) => {
-            if (minutes >= 130) return 175;
+            if (minutes >= 150) return 175;
             if (minutes >= 100) return 122.5;
             if (minutes >= 80) return 105;
             if (minutes >= 60) return 87.5;
@@ -351,7 +351,7 @@
         };
         const getStrengthScore = (sessions) => {
             if (sessions >= 2) return 105;
-            if (sessions >= 1) return 21;
+            if (sessions >= 1) return 30;
             return 0;
         };
         const getFruitScore = (portions) => {
@@ -1068,4 +1068,3 @@
     </script>
 </body>
 </html>
-
